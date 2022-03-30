@@ -2,10 +2,6 @@ import Context from './context.ts';
 import Handle from './handle.ts';
 import Plugin from './plugin.ts';
 
-// interface Options {
-//     routes?: [ string, Handle ][];
-// }
-
 export default class Router implements Plugin {
 
     #get: Map<string, Handle> = new Map();
@@ -18,10 +14,6 @@ export default class Router implements Plugin {
     #trace: Map<string, Handle> = new Map();
     #patch: Map<string, Handle> = new Map();
     #any: Map<string, Handle> = new Map();
-
-    // constructor (options?: Options) {
-    //     this.#routes = new Map(options?.routes);
-    // }
 
     get (path: string, handle: Handle) { this.#get.set(path, handle); }
     head (path: string, handle: Handle) { this.#head.set(path, handle); }
@@ -52,7 +44,10 @@ export default class Router implements Plugin {
             default: routes = this.#any;
         }
 
-        const route = routes.get(`${pathname}`) || routes.get(`*`) || routes.get(`/*`);
+        const route =
+            routes.get(`${pathname}`) || routes.get(`*`) || routes.get(`/*`) ||
+            this.#any.get(`${pathname}`) || this.#any.get(`*`) || this.#any.get(`/*`);
+
         const response = await route?.(context);
 
         return response || new Response('Not Found', { status: 404 });
