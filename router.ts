@@ -41,7 +41,7 @@ export default class Router implements Plugin {
             case 'options': routes = this.#options; break;
             case 'trace': routes = this.#trace; break;
             case 'patch': routes = this.#patch; break;
-            default: routes = this.#any;
+            default: throw new Error('Router - invalid method');
         }
 
         const route =
