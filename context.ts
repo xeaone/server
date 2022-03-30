@@ -61,7 +61,7 @@ export default class Context {
         }
     }
 
-    response (code?: number, message?: string, body?: BodyInit | any): Response {
+    end (code?: number, message?: string, body?: BodyInit | any): Response {
 
         code = code ?? this.#code;
         message = message ?? this.#message ?? STATUS_TEXT.get(code);
