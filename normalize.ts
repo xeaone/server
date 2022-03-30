@@ -1,8 +1,7 @@
 import Context from './context.ts';
+import Plugin from './plugin.ts';
 
-type Protocol = 'http' | 'https' | 'ftp';
-
-export default class Normalize {
+export default class Normalize implements Plugin {
 
     #www = false;
     #https = false;
