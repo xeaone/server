@@ -43,7 +43,7 @@ export default class File implements Plugin {
             file = await Deno.open(path, { read: true });
         } catch (error) {
             if (error.name === 'NotFound') {
-                return context.response(Status.NotFound, STATUS_TEXT.get(Status.NotFound), STATUS_TEXT.get(Status.NotFound));
+                return context.end(Status.NotFound, STATUS_TEXT.get(Status.NotFound), STATUS_TEXT.get(Status.NotFound));
             } else {
                 throw error;
             }
@@ -55,7 +55,7 @@ export default class File implements Plugin {
         }
 
         const readableStream = readableStreamFromReader(file);
-        return context.response(Status.OK, STATUS_TEXT.get(Status.OK), readableStream);
+        return context.end(Status.OK, STATUS_TEXT.get(Status.OK), readableStream);
     }
 
     async handle (context: Context): Promise<Response> {
@@ -91,14 +91,14 @@ export default class File implements Plugin {
                                 file = await Deno.open(join(this.#path, 'index.html'), { read: true });
                             } catch (error) {
                                 if (error.name === 'NotFound') {
-                                    return context.response(Status.NotFound, STATUS_TEXT.get(Status.NotFound), STATUS_TEXT.get(Status.NotFound));
+                                    return context.end(Status.NotFound, STATUS_TEXT.get(Status.NotFound), STATUS_TEXT.get(Status.NotFound));
                                 } else {
                                     throw error;
                                 }
                             }
 
                         } else {
-                            return context.response(Status.NotFound, STATUS_TEXT.get(Status.NotFound), STATUS_TEXT.get(Status.NotFound));
+                            return context.end(Status.NotFound, STATUS_TEXT.get(Status.NotFound), STATUS_TEXT.get(Status.NotFound));
                         }
 
                     } else {
@@ -119,7 +119,7 @@ export default class File implements Plugin {
         }
 
         const readableStream = readableStreamFromReader(file);
-        return context.response(Status.OK, STATUS_TEXT.get(Status.OK), readableStream);
+        return context.end(Status.OK, STATUS_TEXT.get(Status.OK), readableStream);
     }
 
 }
