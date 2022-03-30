@@ -1,6 +1,4 @@
-import { readableStreamFromReader } from 'https://deno.land/std/streams/mod.ts';
-import { Status, STATUS_TEXT, } from 'https://deno.land/std/http/http_status.ts';
-import { extname, join } from 'https://deno.land/std/path/mod.ts';
+import { readableStreamFromReader, Status, STATUS_TEXT, extname, join } from './deps.ts';
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 import Mime from './mime.ts';

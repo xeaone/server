@@ -1,5 +1,4 @@
-import { STATUS_TEXT, } from 'https://deno.land/std/http/http_status.ts';
-// import { extname } from 'https://deno.land/std/path/mod.ts';
+import { STATUS_TEXT, } from './deps.ts';
 import Mime from './mime.ts';
 import Type from './type.ts';
 

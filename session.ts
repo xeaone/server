@@ -1,5 +1,4 @@
-import { Status, STATUS_TEXT, } from 'https://deno.land/std/http/http_status.ts';
-import * as base64url from 'https://deno.land/std/encoding/base64url.ts';
+import { Status, STATUS_TEXT, base64url } from './deps.ts';
 import Context from './context.ts';
 import Handle from './handle.ts';
 import Plugin from './plugin.ts';
