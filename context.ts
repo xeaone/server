@@ -13,8 +13,8 @@ export default class Context {
     redirect = Response.redirect;
 
     #code = 200;
-    #message = '';
-    #body: BodyInit | Record<string, string> = '';
+    #message?: string;
+    #body?: BodyInit | Record<string, unknown>;
 
     constructor (request: Request) {
         this.request = request;
@@ -43,7 +43,7 @@ export default class Context {
         }
     }
 
-    message (message?: string): Context | string {
+    message (message?: string): Context | string | undefined {
         if (message) {
             this.#message = message;
             return this;
@@ -52,7 +52,7 @@ export default class Context {
         }
     }
 
-    body (body: BodyInit | Record<string, string>): Context | BodyInit | Record<string, string> {
+    body (body: BodyInit | Record<string, string>): Context | BodyInit | Record<string, unknown> | undefined {
         if (body) {
             this.#body = body;
             return this;
@@ -61,10 +61,10 @@ export default class Context {
         }
     }
 
-    end (code?: number, message?: string, body?: BodyInit | any): Response {
+    end (code?: number, message?: string, body?: BodyInit | Record<string, unknown>): Response {
 
         code = code ?? this.#code;
-        message = message ?? this.#message ?? STATUS_TEXT.get(code);
+        message = message ?? this.#message ?? STATUS_TEXT.get(code) ?? '';
         body = body ?? this.#body ?? message ?? '';
 
         // if (!this.headers.get('content-type')) {

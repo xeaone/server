@@ -11,7 +11,8 @@ const handler = new Handler();
 const normalize = new Normalize();
 
 normalize.www(true);
-router.any('/*', context => context.end(200, 'ok', 'hello world'));
+router.any('/*', context => context.end(200, 'ok'));
+// router.any('/*', context => context.end(200, 'ok', 'hello world'));
 
 handler.add(router);
 handler.add(normalize);
