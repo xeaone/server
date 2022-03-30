@@ -2,22 +2,11 @@ import Context from './context.ts';
 import Handle from './handle.ts';
 import Plugin from './plugin.ts';
 
-// interface Options {
-//     plugins: [];
-// }
-
 export default class Handler {
 
     #plugins = new Set();
 
-    // constructor (options?: Options) {
-    //     super(options?.plugins);
-    // }
-
     add (plugin: Handle | Plugin) {
-        // if (!plugin || typeof plugin === 'object') {
-        //     throw new Error('Handler - not valid requires function or object');
-        // }
         this.#plugins.add(plugin);
     }
 
