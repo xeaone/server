@@ -14,7 +14,7 @@ export default class Context {
 
     #code = 200;
     #message?: string;
-    #body?: BodyInit | Record<string, unknown>;
+    #body?: BodyInit | Record<string, unknown> | Array<unknown>;
 
     constructor (request: Request) {
         this.request = request;
@@ -52,7 +52,7 @@ export default class Context {
         }
     }
 
-    body (body: BodyInit | Record<string, string>): Context | BodyInit | Record<string, unknown> | undefined {
+    body (body: BodyInit | Record<string, unknown> | Array<unknown>): Context | BodyInit | Record<string, unknown> | Array<unknown> | undefined {
         if (body) {
             this.#body = body;
             return this;
@@ -61,7 +61,7 @@ export default class Context {
         }
     }
 
-    end (code?: number, message?: string, body?: BodyInit | Record<string, unknown>): Response {
+    end (code?: number, message?: string, body?: BodyInit | Record<string, unknown> | Array<unknown>): Response {
 
         code = code ?? this.#code;
         message = message ?? this.#message ?? STATUS_TEXT.get(code) ?? '';
