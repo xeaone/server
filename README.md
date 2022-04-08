@@ -1,3 +1,3 @@
 # X Server
-A Deno server module library. Coming Soon.
+A Deno server module. Coming Soon.
 
