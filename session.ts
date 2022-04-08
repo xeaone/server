@@ -82,6 +82,7 @@ export default class Session implements Plugin {
 
     }
 
+    // ingore session requirements
     get (...path: string[]) { path.forEach(path => this.#get.add(path)); return this; }
     head (...path: string[]) { path.forEach(path => this.#head.add(path)); return this; }
     post (...path: string[]) { path.forEach(path => this.#post.add(path)); return this; }
@@ -96,9 +97,6 @@ export default class Session implements Plugin {
     secret (secret: string) { this.#secret = secret; return this; }
     validate (validate: Handle) { this.#validate = validate; return this; }
     signature (signature: string) { this.#signature = signature; return this; }
-
-    // encode (data: ArrayBuffer) { return base64url.encode(data); }
-    // decode (data: string) { return base64url.decode(data); }
 
     async encrypt (data: string, secret?: string) {
         secret = secret || this.#secret;
@@ -316,7 +314,7 @@ export default class Session implements Plugin {
         return null;
     }
 
-    async handle (context: Context) {
+    async handle (context: Context): Promise<Response | void> {
         const method = context.method;
         const path = context.url.pathname;
 
@@ -364,10 +362,6 @@ export default class Session implements Plugin {
         const decrypted = await this.decrypt(encrypted);
         if (!decrypted) return this.unauthorized();
 
-        // const data = this.parse ? JSON.parse(decrypted) : decrypted;
-        // context.tool.session.data = data;
-        // const validate = await this.#validate?.(context, data);
-
         context.tool.session.data = decrypted;
         const validate = await this.#validate(context, decrypted);
 
@@ -393,4 +387,3 @@ export default class Session implements Plugin {
 
 // const u = await session.unsign(e, `${now}`, s);
 // console.log(u);
-
