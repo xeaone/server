@@ -13,6 +13,7 @@ export default class Context {
     redirect = Response.redirect;
 
     #code = 200;
+    #ended = false;
     #message?: string;
     #body?: BodyInit | Record<string, unknown> | Array<unknown>;
 
@@ -63,6 +64,7 @@ export default class Context {
 
     end (code?: number, message?: string, body?: BodyInit | Record<string, unknown> | Array<unknown>): Response {
 
+        this.#ended = true;
         code = code ?? this.#code;
         message = message ?? this.#message ?? STATUS_TEXT.get(code) ?? '';
         body = body ?? this.#body ?? message ?? '';

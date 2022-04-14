@@ -22,8 +22,8 @@ export default class Payload implements Plugin {
     #patch: Set<string> = new Set();
     #any: Set<string> = new Set();
 
-    constructor (options: Options) {
-        this.#parse = options.parse ?? this.#parse;
+    constructor (options?: Options) {
+        this.#parse = options?.parse ?? this.#parse;
     }
 
     parse (parse: Parse) {
