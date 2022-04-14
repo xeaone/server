@@ -69,7 +69,7 @@ export default class Payload implements Plugin {
         try {
             context.tool.payload.data = await context.request[ this.#parse ]();
         } catch {
-            context.tool.payload.data = undefined;
+            context.tool.payload.data = {};
         }
 
     }
