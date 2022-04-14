@@ -64,9 +64,11 @@ export default class Payload implements Plugin {
         if (paths.has(path) || paths.has('*') || paths.has('/*')) return;
         if (this.#any.has(path) || this.#any.has('*') || this.#any.has('/*')) return;
 
+        context.tool.payload = {};
+
         try {
             context.tool.payload.data = await context.request[ this.#parse ]();
-        } catch (_) {
+        } catch {
             context.tool.payload.data = undefined;
         }
 
