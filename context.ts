@@ -62,12 +62,13 @@ export default class Context {
         }
     }
 
-    end (code?: number, message?: string, body?: BodyInit | Record<string, unknown> | Array<unknown>): Response {
+    end (code?: number, body?: BodyInit | Record<string, unknown> | Array<unknown>): Response {
+        // if (this.#ended) return;
 
         this.#ended = true;
-        code = code ?? this.#code;
-        message = message ?? this.#message ?? STATUS_TEXT.get(code) ?? '';
-        body = body ?? this.#body ?? message ?? '';
+        this.#code = code ?? this.#code;
+        this.#message = this.#message ?? STATUS_TEXT.get(this.#code) ?? '';
+        this.#body = body ?? this.#body ?? this.#message ?? '';
 
         // if (!this.headers.get('content-type')) {
         //     const path = this.url.pathname;
@@ -90,13 +91,10 @@ export default class Context {
         //     }
 
         // } else
-        const type = Type(body);
-        if (type === 'object' || type === 'array'
-            // typeof body === 'object' &&
-            // !(body === null || typeof body === 'string' || body instanceof Blob || body instanceof ArrayBuffer
-            //     || body instanceof FormData || body instanceof ReadableStream || body instanceof URLSearchParams)
-        ) {
-            body = JSON.stringify(body);
+
+        const type = Type(this.#body);
+        if (type === 'object' || type === 'array') {
+            this.#body = JSON.stringify(this.#body);
 
             if (!this.headers.has('content-type')) {
                 this.headers.set('content-type', `${Mime[ 'json' ]};charset=utf8`);
@@ -105,7 +103,7 @@ export default class Context {
         }
 
         // this.headers.set('content-length', Buffer.byteLength(body))
-        return new Response(body as BodyInit, { status: code, statusText: message, headers: this.headers });
+        return new Response(this.#body as BodyInit, { status: this.#code, statusText: this.#message, headers: this.headers });
     }
 
     // set (name: string, data: object) {
