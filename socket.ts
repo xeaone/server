@@ -1,17 +1,17 @@
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
-type Open = (ws: WebSocket, ev: Event) => any;
-type Close = (ws: WebSocket, ev: CloseEvent) => any;
-type Message = (ws: WebSocket, ev: MessageEvent) => any;
-type Error = (ws: WebSocket, ev: Event | ErrorEvent) => any;
+type Open = (ws: WebSocket, ev: Event) => void;
+type Close = (ws: WebSocket, ev: CloseEvent) => void;
+type Message = (ws: WebSocket, ev: MessageEvent) => void;
+type Error = (ws: WebSocket, ev: Event | ErrorEvent) => void;
 
 export default class Socket implements Plugin {
 
     #open?: Open;
     #close?: Close;
-    #message?: Message;
     #error?: Error;
+    #message?: Message;
 
     constructor () {
 

@@ -1,28 +1,27 @@
-//chat_server.ts
-import { serve } from "https://deno.land/std/http/mod.ts";
+import { serve } from 'https://deno.land/std/http/mod.ts';
 
-function logError (msg: string) {
-    console.log(msg);
-    Deno.exit(1);
+function open (e: Event) {
+    const w = e.target as WebSocket;
+    console.log('open');
 }
 
-function handleConnected () {
-    console.log("Connected to client ...");
+function close (e: Event) {
+    const w = e.target as WebSocket;
+    console.log('close');
 }
 
-function handleMessage (ws: WebSocket, data: string) {
-    console.log("CLIENT: " + data);
-    const reply = prompt("Server: ") || "No reply";
-    if (reply === "exit") return ws.close();
-    ws.send(reply as string);
+function error (e: Event) {
+    const w = e.target as WebSocket;
+    console.log('error');
 }
 
-function handleError (e: Event | ErrorEvent) {
-    console.log(e instanceof ErrorEvent ? e.message : e.type);
+function message (e: MessageEvent) {
+    const w = e.target as WebSocket;
+    console.log('server message: ', e.data);
+    w.send(new Date().toString());
 }
 
-
-function reqHandler (req: Request) {
+function request (req: Request) {
 
     if (req.headers.get('upgrade')) {
 
@@ -32,10 +31,10 @@ function reqHandler (req: Request) {
 
         const { socket: ws, response } = Deno.upgradeWebSocket(req);
 
-        ws.onopen = () => handleConnected();
-        ws.onmessage = (m) => handleMessage(ws, m.data);
-        ws.onclose = () => logError("Disconnected from client ...");
-        ws.onerror = (e) => handleError(e);
+        ws.onopen = open;
+        ws.onclose = close;
+        ws.onerror = error;
+        ws.onmessage = message;
 
         return response;
     }
@@ -43,5 +42,6 @@ function reqHandler (req: Request) {
     return new Response('hello world');
 }
 
-console.log("Waiting for client ...");
-serve(reqHandler, { port: 8000 });
+serve(request, { port: 8000 });
+
+console.log('listening: 8000');
