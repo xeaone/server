@@ -1,7 +1,7 @@
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
-export default class Payload implements Plugin {
+export default class Cors implements Plugin {
 
     #get: Map<string, string> = new Map();
     #head: Map<string, string> = new Map();
