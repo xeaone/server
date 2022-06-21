@@ -40,8 +40,11 @@ export default class Cors implements Plugin {
             case 'options': paths = this.#options; break;
             case 'trace': paths = this.#trace; break;
             case 'patch': paths = this.#patch; break;
-            default: throw new Error('Cors - invalid method');
+            default: throw new Error('Cors - not valid method');
         }
+
+        if (!paths.has(path) && !paths.has('*') && !paths.has('/*') &&
+            !this.#any.has(path) && !this.#any.has('*') && !this.#any.has('/*')) return;
 
         const origin =
             paths.get(path) ?? paths.get('*') ?? paths.get('/*') ??
