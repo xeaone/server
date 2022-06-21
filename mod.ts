@@ -4,6 +4,7 @@ import Context from './context.ts';
 import Handler from './handler.ts';
 import Session from './session.ts';
 import Router from './router.ts';
+import Cors from './cors.ts';
 import File from './file.ts';
 
 import { serve as Server } from './deps.ts';
@@ -22,6 +23,7 @@ export {
     Router,
     Handle,
     Plugin,
+    Cors,
     File,
 
     Normalize as normalize,
@@ -33,6 +35,7 @@ export {
     Router as router,
     Handle as handle,
     Plugin as plugin,
+    Cors as cors,
     File as file,
 
 };
@@ -48,6 +51,7 @@ export default {
     Router,
     Handle,
     Plugin,
+    Cors,
     File,
 
     normalize: Normalize,
@@ -59,6 +63,7 @@ export default {
     router: Router,
     handle: Handle,
     plugin: Plugin,
+    cors: Cors,
     file: File
 
 } as const;
