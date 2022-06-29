@@ -44,13 +44,21 @@ export default class Router implements Plugin {
             default: throw new Error('Router - invalid method');
         }
 
-        const route =
-            routes.get(`${pathname}`) || routes.get(`*`) || routes.get(`/*`) ||
-            this.#any.get(`${pathname}`) || this.#any.get(`*`) || this.#any.get(`/*`);
+        let route = routes.get(pathname) || this.#any.get(pathname);
 
-        const response = await route?.(context);
+        if (!route) {
+            let path = '';
+            const parts = pathname.replace(/\/[^./]+\.[^./]+$|^\/+|\/+$/g, '').split('/');
+            for (const part of parts) {
+                path += part ? `/${part}` : part;
+                route = routes.get(`${path}/*`) || this.#any.get(`${path}/*`);
+                if (route) break;
+            }
+        }
 
-        return response || new Response('Not Found', { status: 404 });
+        route = route || routes.get('/*') || routes.get('*') || this.#any.get('/*') || this.#any.get('*');
+
+        return await route?.(context) || new Response('Not Found', { status: 404 });
     }
 
 }
