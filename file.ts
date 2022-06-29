@@ -78,6 +78,10 @@ export default class File implements Plugin {
 
             if (error.name === 'NotFound') {
 
+                if (!path.endsWith('.html') && path.includes('.')) {
+                    return context.end(404);
+                }
+
                 try {
                     path = join(path.slice(0, -5), 'index.html');
                     file = await Deno.open(path, { read: true });
