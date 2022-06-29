@@ -2,6 +2,8 @@ import { STATUS_TEXT, } from './deps.ts';
 import Mime from './mime.ts';
 import Type from './type.ts';
 
+type Body = BodyInit | Record<string, any> | Array<any> | null | undefined;
+
 export default class Context {
 
     tool: Record<string, any> = {};
@@ -13,9 +15,9 @@ export default class Context {
     redirect = Response.redirect;
 
     #code = 200;
+    #body: Body;
     #ended = false;
     #message?: string;
-    #body?: BodyInit | Record<string, unknown> | Array<unknown>;
 
     constructor (request: Request) {
         this.request = request;
@@ -53,7 +55,7 @@ export default class Context {
         }
     }
 
-    body (body: BodyInit | Record<string, unknown> | Array<unknown>): Context | BodyInit | Record<string, unknown> | Array<unknown> | undefined {
+    body (body: Body): Context | Body {
         if (body) {
             this.#body = body;
             return this;
@@ -62,7 +64,7 @@ export default class Context {
         }
     }
 
-    end (code?: number, body?: BodyInit | Record<string, unknown> | Array<unknown>): Response {
+    end (code?: number, body?: Body): Response {
         // if (this.#ended) return;
 
         this.#ended = true;
@@ -93,7 +95,7 @@ export default class Context {
         // } else
 
         const type = Type(this.#body);
-        if (type === 'object' || type === 'array') {
+        if (type === 'object' || type === 'array' || type === 'null') {
             this.#body = JSON.stringify(this.#body);
 
             if (!this.headers.has('content-type')) {
