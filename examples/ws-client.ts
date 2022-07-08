@@ -20,24 +20,24 @@
 //     console.log(e instanceof ErrorEvent ? e.message : e.type);
 // }
 
-function open (e: Event) {
+function open(e: Event) {
     const w = e.target as WebSocket;
     console.log('open');
     w.send('foo');
 }
 
-function close (e: Event) {
-    const w = e.target as WebSocket;
+function close(e: Event) {
+    // const w = e.target as WebSocket;
     console.log('close');
 }
 
-function error (e: Event) {
-    const w = e.target as WebSocket;
+function error(e: Event) {
+    // const w = e.target as WebSocket;
     console.log('error');
 }
 
-function message (e: MessageEvent) {
-    const w = e.target as WebSocket;
+function message(e: MessageEvent) {
+    // const w = e.target as WebSocket;
     console.log('client message: ', e.data);
     // w.send(new Date().toString());
 }
