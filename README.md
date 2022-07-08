@@ -13,47 +13,22 @@ import {
     Server,
     Router,
     Handler,
-    Context,
     Normalize
 } from 'https://deno.land/x/xserver/mod.ts';
 
-import routes from './routes.ts';
-import validate from './validate.ts';
-
 const port = 8080;
-const secret = 'generate-your-secret';
-const signanture = 'generate-your-signature';
 
-const routes = [
-   [ '/helo-world', (context: Context) => context.end(200, 'helo world')]
-]
-
-const file = new File();
 const router = new Router();
-const payload = new Payload();
-const session = new Session();
 const handler = new Handler();
 const normalize = new Normalize();
 
-file.spa(true);
-file.path('./web');
-
-session.get('/*');
-session.secret(secret);
-session.validate(validate);
-session.signature(signature);
-session.post('/sign-up', '/sign-in', '/sign-out');
-
-routes.forEach(([ path, handle ]) => router.post(path, handle));
-
-router.get('/*', context => file.handle(context));
+router.get('/post', context => context.end(200, 'post'));
+router.get('/*', context => context.end(200, 'get'));
 
 handler.add(normalize);
-handler.add(payload);
-handler.add(session);
 handler.add(router);
 
 Server(request => handler.handle(request), { port });
 
-console.log(`listening on port: ${port}`);
+console.log(`listening: ${port}`);
 ```
