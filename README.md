@@ -21,8 +21,10 @@ const router = new Router();
 const handler = new Handler();
 const normalize = new Normalize();
 
-router.get('/post', context => context.end(200, 'post'));
+normalize.any('/*', true);
+
 router.get('/*', context => context.end(200, 'get'));
+router.post('/post', context => context.end(200, 'post'));
 
 handler.add(normalize);
 handler.add(router);
@@ -36,10 +38,7 @@ console.log(`listening: ${port}`);
 Wraps Deno Serve `{ serve } from 'https://deno.land/std@0.134.0/http/server.ts';`
 
 ### Handler
-(handler.ts)[./handler.ts]
-
 Constructor that stores the middleware/plugins/tools used on each request.
-
 ```ts
 import { Server, Handler, Normalize } from 'https://deno.land/x/xserver/mod.ts';
 
@@ -52,10 +51,7 @@ Server(request => handler.handle(request));
 ```
 
 ### Normalize
-(normalize)[./normalize.ts]
-
 Constructor Plugin that will remove `index.html`, `.html`, and `//` from the url then redirect. Optionally you can redirect `http` to `https` and `www` to  `non-www`.
-
 ```ts
 import { Normalize } from 'https://deno.land/x/xserver/mod.ts';
 const normalize = new Normalize();
@@ -64,10 +60,7 @@ normalize.https(true); // redirects http to https
 normalize.any('/*', true); // normalize all methos and all paths
 ```
 ### Cors
-(cors)[./cors.ts]
-
 Constructor Plugin that will add cors header.
-
 ```ts
 import { Cors } from 'https://deno.land/x/xserver/mod.ts';
 const cors = new Cors();
@@ -76,10 +69,7 @@ cors.any('/*', '*'); // any method any path and CORS on any domain
 ```
 
 ### Payload
-(payload)[./payload.ts]
-
 Constructor Plugin that will
-
 ```ts
 import { Payload } from 'https://deno.land/x/xserver/mod.ts';
 const payload = new Payload();
@@ -88,8 +78,6 @@ payload.post('/*', true); // post method any path
 ```
 
 ### Router
-(router)[./router.ts]
-
 Constructor Plugin that will route request to Handle methods.
 
 ```ts
@@ -99,10 +87,7 @@ router.post('/*', context => context.end(200, 'hello world')); // post method an
 ```
 
 ### File
-(file)[./file.ts]
-
 Constructor Plugin that will
-
 ```ts
 import { File, Router } from 'https://deno.land/x/xserver/mod.ts';
 const file = new File();
@@ -112,17 +97,11 @@ file.get('/*', true); // get method any path serve files from the ./web folder
 ```
 
 ### Session
-(session)[./session.ts]
-
 Constructor Plugin that will
-
 ```ts
 ```
 
 ### Socket
-(socket)[./socket.ts]
-
 Constructor Plugin that will
-
 ```ts
 ```
