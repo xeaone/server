@@ -54,13 +54,14 @@ Server(request => handler.handle(request));
 ### Normalize
 (normalize)[./normalize.ts]
 
-Constructor Plugin that will remove `index.html`, `.html`, and `//` from the url then redirect. Optionally you can redirect http to https and www to non www.
+Constructor Plugin that will remove `index.html`, `.html`, and `//` from the url then redirect. Optionally you can redirect `http` to `https` and `www` to  `non-www`.
 
 ```ts
 import { Normalize } from 'https://deno.land/x/xserver/mod.ts';
 const normalize = new Normalize();
 normalize.www(true); // redirects www to non www
 normalize.https(true); // redirects http to https
+normalize.any('/*', true); // normalize all methos and all paths
 ```
 ### Cors
 (cors)[./cors.ts]
@@ -70,8 +71,8 @@ Constructor Plugin that will add cors header.
 ```ts
 import { Cors } from 'https://deno.land/x/xserver/mod.ts';
 const cors = new Cors();
-cors.get('/foo', 'https://foo.com/'); // get method test path and only foo.com domain
-cors.any('/*', '*'); // any method any path and any domain
+cors.get('/foo', 'https://foo.com/'); // get method test path and CORS on only foo.com domain
+cors.any('/*', '*'); // any method any path and CORS on any domain
 ```
 
 ### Payload
@@ -83,7 +84,7 @@ Constructor Plugin that will
 import { Payload } from 'https://deno.land/x/xserver/mod.ts';
 const payload = new Payload();
 payload.parse('json'); // default is json
-payload.post('/*'); // post method any path
+payload.post('/*', true); // post method any path
 ```
 
 ### Router
@@ -94,7 +95,7 @@ Constructor Plugin that will route request to Handle methods.
 ```ts
 import { Router } from 'https://deno.land/x/xserver/mod.ts';
 const router = new Router();
-router.any('/*', (context: Context) => context.end(200, 'hello world')); // any method any path
+router.post('/*', context => context.end(200, 'hello world')); // post method any path
 ```
 
 ### File
@@ -107,7 +108,7 @@ import { File, Router } from 'https://deno.land/x/xserver/mod.ts';
 const file = new File();
 file.spa(true);
 file.path('./web');
-file.any('/*', (context: Context) => context.end(200, 'hello world')); // any method any path
+file.get('/*', true); // get method any path server files from the ./web folder
 ```
 
 ### Session
