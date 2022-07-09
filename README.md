@@ -108,7 +108,7 @@ import { File, Router } from 'https://deno.land/x/xserver/mod.ts';
 const file = new File();
 file.spa(true);
 file.path('./web');
-file.get('/*', true); // get method any path server files from the ./web folder
+file.get('/*', true); // get method any path serve files from the ./web folder
 ```
 
 ### Session
