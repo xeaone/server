@@ -1,10 +1,11 @@
 import Context from './context.ts';
 import Handle from './handle.ts';
 import Plugin from './plugin.ts';
+import Type from './type.ts';
 
 export default class Handler {
 
-    #plugins = new Set();
+    #plugins: Set<Handle | Plugin> = new Set();
 
     add (plugin: Handle | Plugin) {
         this.#plugins.add(plugin);
@@ -14,21 +15,76 @@ export default class Handler {
         const context = new Context(request);
         const iterator = this.#plugins.values();
 
+        const method = context.request.method.toLowerCase();
+        const pathname = new URL(context.request.url).pathname;
+
         let result = iterator.next();
+
+        main:
         while (!result.done) {
             const plugin = result.value as any;
+            const type = Type(plugin);
 
-            let response;
-            if (plugin && typeof plugin === 'object') {
-                if (typeof plugin.handle !== 'function') throw new Error('Handler - plugin requires handle method');
-                response = await plugin.handle(context);
-            } else if (typeof plugin === 'function') {
-                response = await plugin(context);
+            if (type === 'object') {
+
+                // if (plugin.constructor.name in context.tool) {
+                //     throw new Error('Handler - duplicate plugin');
+                // }
+
+                // context.set(plugin.constructor.name.toLowerCase(), plugin);
+
+                if (typeof plugin.setup === 'function') {
+                    await plugin.setup(context);
+                }
+
+                if (typeof plugin.handle === 'function') {
+
+                    const paths = plugin.data[ method ];
+                    console.log(plugin.constructor.name, method, pathname, paths);
+
+                    const exact = paths.get(pathname) ?? plugin.data.any.get(pathname);
+                    if (exact) {
+                        console.log(plugin.constructor.name, method, pathname, paths);
+                        const response = await plugin.handle(context, exact);
+                        if (response instanceof Response) return response;
+                    } else if (exact !== undefined) {
+                        result = iterator.next();
+                        continue main;
+                    }
+
+                    let path = '';
+                    const parts = pathname.replace(/\/[^./]+\.[^./]+$|^\/+|\/+$/g, '').split('/');
+                    for (const part of parts) {
+                        path += part ? `/${part}` : part;
+
+                        const dynamic = paths.get(`${path}/*`) ?? plugin.data.any.get(`${path}/*`);
+                        if (dynamic) {
+                            const response = await plugin.handle(context, dynamic);
+                            if (response instanceof Response) return response;
+                        } else if (dynamic !== undefined) {
+                            result = iterator.next();
+                            continue main;
+                        }
+
+                    }
+
+                    const any = paths.get('/*') ?? paths.get('*') ?? plugin.data.any.get('/*') ?? plugin.data.any.get('*');
+                    if (any) {
+                        const response = await plugin.handle(context, any);
+                        if (response instanceof Response) return response;
+                    } else if (any !== undefined) {
+                        result = iterator.next();
+                        continue main;
+                    }
+
+                }
+
+            } else if (type === 'function') {
+                const response = await plugin(context);
+                if (response instanceof Response) return response;
             } else {
                 throw new Error('Handler - not valid requires function or object');
             }
-
-            if (response instanceof Response) return response;
 
             result = iterator.next();
         }

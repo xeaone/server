@@ -6,16 +6,12 @@ type Close = (ws: WebSocket, ev: CloseEvent) => void;
 type Message = (ws: WebSocket, ev: MessageEvent) => void;
 type Error = (ws: WebSocket, ev: Event | ErrorEvent) => void;
 
-export default class Socket implements Plugin {
+export default class Socket extends Plugin {
 
     #open?: Open;
     #close?: Close;
     #error?: Error;
     #message?: Message;
-
-    constructor () {
-
-    }
 
     open (open: Open) { this.#open = open; }
     close (close: Close) { this.#close = close; }

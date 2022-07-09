@@ -16,7 +16,6 @@ export default class Context {
 
     #code = 200;
     #body: Body;
-    #ended = false;
     #message?: string;
 
     constructor (request: Request) {
@@ -37,7 +36,7 @@ export default class Context {
         Object.defineProperty(this.tool, name, property);
     }
 
-    code (code?: number): Context | number {
+    code (code?: number): this | number | any {
         if (code) {
             this.#code = code;
             return this;
@@ -46,7 +45,7 @@ export default class Context {
         }
     }
 
-    message (message?: string): Context | string | undefined {
+    message (message?: string): this | string | undefined | any {
         if (message) {
             this.#message = message;
             return this;
@@ -55,7 +54,16 @@ export default class Context {
         }
     }
 
-    body (body: Body): Context | Body {
+    head (head?: Record<string, string>): this | Record<string, string> | any {
+        if (head) {
+            Object.entries(head).forEach(([ name, value ]) => this.headers.append(name, value));
+            return this;
+        } else {
+            return Object.fromEntries(this.headers);
+        }
+    }
+
+    body (body?: Body): this | Body | any {
         if (body) {
             this.#body = body;
             return this;
@@ -65,36 +73,13 @@ export default class Context {
     }
 
     end (code?: number, body?: Body): Response {
-        // if (this.#ended) return;
 
-        this.#ended = true;
         this.#code = code ?? this.#code;
         this.#message = this.#message ?? STATUS_TEXT.get(this.#code) ?? '';
         this.#body = body ?? this.#body ?? this.#message ?? '';
 
-        // if (!this.headers.get('content-type')) {
-        //     const path = this.url.pathname;
-        //     const extension = extname(path).slice(1) as keyof typeof Mime;
-
-        //     if (extension) {
-        //         const mime = Mime[ extension ] ?? Mime[ 'default' ];
-        //         this.headers.set('content-type', `${mime};charset=utf8`);
-        //     }
-
-        // }
-
-        // if (
-        //     typeof body === 'string' || body instanceof Blob || body instanceof ArrayBuffer
-        //     || body instanceof FormData || body instanceof ReadableStream || body instanceof URLSearchParams
-        // ) {
-
-        //     if (!this.headers.has('content-type')) {
-        //         this.headers.set('content-type', `${Mime[ 'default' ]};charset=utf8`);
-        //     }
-
-        // } else
-
         const type = Type(this.#body);
+
         if (type === 'object' || type === 'array' || type === 'null') {
             this.#body = JSON.stringify(this.#body);
 
@@ -104,14 +89,8 @@ export default class Context {
 
         }
 
-        // this.headers.set('content-length', Buffer.byteLength(body))
         return new Response(this.#body as BodyInit, { status: this.#code, statusText: this.#message, headers: this.headers });
     }
-
-    // set (name: string, data: object) {
-    //     if (name in this) throw new Error('Context - can not overwrite');
-    //     else this[ name ] = data;
-    // }
 
 
 }

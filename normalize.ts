@@ -1,7 +1,7 @@
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
-export default class Normalize implements Plugin {
+export default class Normalize extends Plugin {
 
     #www = false;
     #https = false;

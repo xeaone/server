@@ -1,5 +1,5 @@
 import {
-    // File,
+    File,
     Server,
     Router,
     Payload,
@@ -7,7 +7,7 @@ import {
     Handler,
     Context,
     Normalize
-} from 'https://deno.land/x/xserver/mod.ts';
+} from '../mod.ts';
 
 const port = 8080;
 const secret = 'generate-your-secret';
@@ -33,47 +33,65 @@ const routes = {
         await context.tool.session.create({ expires, created, session });
         sessions.push(session);
         return context.end(200, 'signed in');
-    },
+    }
 };
 
-// const file = new File();
+const file = new File();
 const router = new Router();
 const payload = new Payload();
 const session = new Session();
 const handler = new Handler();
 const normalize = new Normalize();
 
-// file.spa(true);
-// file.path('./web');
+file.spa(true);
+file.path('./web');
+file.get('/*', true);
 
-session.get('/*');
+payload.post('/*', true);
+normalize.any('/*', true);
+
 session.secret(secret);
 session.validate(validate);
 session.signature(signature);
-session.post('/sign-up', '/sign-in');
 
-Object.entries(routes).forEach(([path, handle]) => router.post(path, handle));
+session.any('/*', true);
+session.get('/*', false);
+session.post('/sign-up', false);
+session.post('/sign-in', false);
+
+// Object.entries(routes).forEach(([ path, handle ]) => router.post(path, handle));
+router.post(routes);
 
 // router.get('/*', context => file.handle(context));
-router.get('/*', context => context.end(200, 'hello world'));
+
+router.get('/*', context => {
+    return context.head({ 'content-type': 'text/html' }).end(200, /*html*/`
+    <h1>Hello World</h1>
+    <script type="module">
+        let result;
+
+        result = await fetch('/sign-out', { method:'POST' });
+        console.log('/sign-out','result:', result.status, 'expected:', 401, 'text:', await result.text());
+
+        result = await fetch('/sign-in', { method:'POST', body: JSON.stringify({username:'u',password:'p'}) });
+        console.log('/sign-in','result:', result.status, 'expected:', 400, 'text:', await result.text());
+
+        result = await fetch('/sign-in', { method:'POST', body: JSON.stringify({username:'username',password:'password'}) });
+        console.log('/sign-in','result:', result.status, 'expected:', 200, 'text:', await result.text());
+
+        result = await fetch('/sign-out', { method:'POST' });
+        console.log('/sign-out','result:', result.status, 'expected:', 200, 'text:', await result.text());
+
+    </script>
+    `);
+});
 
 handler.add(normalize);
 handler.add(payload);
 handler.add(session);
 handler.add(router);
+handler.add(file);
 
 Server(request => handler.handle(request), { port });
 
 console.log(`listening: ${port}`);
-
-/*
-let result;
-result = await fetch('/sign-out', { method:'POST' });
-console.log(await result.text());
-result = await fetch('/sign-in', { method:'POST', body: JSON.stringify({username:'u',password:'p'}) });
-console.log(await result.text());
-result = await fetch('/sign-in', { method:'POST', body: JSON.stringify({username:'username',password:'password'}) });
-console.log(await result.text());
-result = await fetch('/sign-out', { method:'POST' });
-console.log(await result.text());
-*/

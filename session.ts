@@ -1,12 +1,13 @@
 import { Status, STATUS_TEXT, base64url } from './deps.ts';
 import Context from './context.ts';
-import Handle from './handle.ts';
 import Plugin from './plugin.ts';
 
 /*
     Base64 URL: https://www.ietf.org/rfc/rfc4648.txt
     Secure Session Cookies: https://tools.ietf.org/html/rfc6896
 */
+
+type Validate = (context: Context, data: any) => void | Response;
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -27,10 +28,10 @@ interface Options {
     maxAge?: number;
     secret?: string;
     signature?: string;
-    validate?: (context: Context, data: any) => void;
+    validate?: Validate;
 }
 
-export default class Session implements Plugin {
+export default class Session extends Plugin {
 
     scheme = 'scheme';
     name: string;
@@ -47,20 +48,10 @@ export default class Session implements Plugin {
     maxAge?: number;
     #secret?: string;
     #signature?: string;
-    #validate?: (context: Context, data: any) => void;
-
-    #get: Set<string> = new Set();
-    #head: Set<string> = new Set();
-    #post: Set<string> = new Set();
-    #put: Set<string> = new Set();
-    #delete: Set<string> = new Set();
-    #connect: Set<string> = new Set();
-    #options: Set<string> = new Set();
-    #trace: Set<string> = new Set();
-    #patch: Set<string> = new Set();
-    #any: Set<string> = new Set();
+    #validate?: Validate;
 
     constructor (options?: Options) {
+        super();
 
         this.maxAge = options?.maxAge;
         this.name = options?.name ?? 'session';
@@ -83,19 +74,19 @@ export default class Session implements Plugin {
     }
 
     // ingore session requirements
-    get (...path: string[]) { path.forEach(path => this.#get.add(path)); return this; }
-    head (...path: string[]) { path.forEach(path => this.#head.add(path)); return this; }
-    post (...path: string[]) { path.forEach(path => this.#post.add(path)); return this; }
-    put (...path: string[]) { path.forEach(path => this.#put.add(path)); return this; }
-    delete (...path: string[]) { path.forEach(path => this.#delete.add(path)); return this; }
-    connect (...path: string[]) { path.forEach(path => this.#connect.add(path)); return this; }
-    options (...path: string[]) { path.forEach(path => this.#options.add(path)); return this; }
-    trace (...path: string[]) { path.forEach(path => this.#trace.add(path)); return this; }
-    patch (...path: string[]) { path.forEach(path => this.#patch.add(path)); return this; }
-    any (...path: string[]) { path.forEach(path => this.#any.add(path)); return this; }
+    // get (...path: string[]) { path.forEach(path => this.#get.add(path)); return this; }
+    // head (...path: string[]) { path.forEach(path => this.#head.add(path)); return this; }
+    // post (...path: string[]) { path.forEach(path => this.#post.add(path)); return this; }
+    // put (...path: string[]) { path.forEach(path => this.#put.add(path)); return this; }
+    // delete (...path: string[]) { path.forEach(path => this.#delete.add(path)); return this; }
+    // connect (...path: string[]) { path.forEach(path => this.#connect.add(path)); return this; }
+    // options (...path: string[]) { path.forEach(path => this.#options.add(path)); return this; }
+    // trace (...path: string[]) { path.forEach(path => this.#trace.add(path)); return this; }
+    // patch (...path: string[]) { path.forEach(path => this.#patch.add(path)); return this; }
+    // any (...path: string[]) { path.forEach(path => this.#any.add(path)); return this; }
 
     secret (secret: string) { this.#secret = secret; return this; }
-    validate (validate: Handle) { this.#validate = validate; return this; }
+    validate (validate: Validate) { this.#validate = validate; return this; }
     signature (signature: string) { this.#signature = signature; return this; }
 
     async encrypt (data: string, secret?: string) {
@@ -314,27 +305,7 @@ export default class Session implements Plugin {
         return null;
     }
 
-    async handle (context: Context): Promise<Response | void> {
-        const method = context.method;
-        const path = context.url.pathname;
-
-        let paths;
-        switch (method) {
-            case 'get': paths = this.#get; break;
-            case 'head': paths = this.#head; break;
-            case 'post': paths = this.#post; break;
-            case 'put': paths = this.#put; break;
-            case 'delete': paths = this.#delete; break;
-            case 'connect': paths = this.#connect; break;
-            case 'options': paths = this.#options; break;
-            case 'trace': paths = this.#trace; break;
-            case 'patch': paths = this.#patch; break;
-            default: throw new Error('Session - invalid method');
-        }
-
-        if (typeof this.#validate !== 'function') {
-            throw new Error('Session - validate required');
-        }
+    setup (context: Context) {
 
         context.set('session', {
             data: null,
@@ -342,8 +313,13 @@ export default class Session implements Plugin {
             destroy: this.destroy.bind(this, context)
         });
 
-        if (paths.has(path) || paths.has('*') || paths.has('/*')) return;
-        if (this.#any.has(path) || this.#any.has('*') || this.#any.has('/*')) return;
+    }
+
+    async handle (context: Context) {
+
+        if (typeof this.#validate !== 'function') {
+            throw new Error('Session - validate required');
+        }
 
         const cookie = await this.cookie(context);
         if (!cookie) return this.unauthorized();

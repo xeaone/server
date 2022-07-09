@@ -8,22 +8,33 @@ interface Options {
     path?: string;
 }
 
-export default class File implements Plugin {
+export default class File extends Plugin {
 
-    #spa?: boolean;
-    #path?: string;
+    #path = '';
+    #spa = false;
 
     constructor (options?: Options) {
-        this.#spa = options?.spa;
-        this.#path = options?.path;
+        super();
+        this.#spa = options?.spa ?? this.#spa;
+        this.#path = options?.path ?? this.#path;
     }
 
-    spa (data: boolean) {
-        this.#spa = data;
+    spa (data?: boolean): this | boolean {
+        if (data === undefined) {
+            return this.#spa;
+        } else {
+            this.#spa = data;
+            return this;
+        }
     }
 
-    path (data: string) {
-        this.#path = data;
+    path (data?: string): this | string {
+        if (data === undefined) {
+            return this.#path;
+        } else {
+            this.#path = data;
+            return this;
+        }
     }
 
     async direct (context: Context, path: string): Promise<Response> {
@@ -94,11 +105,13 @@ export default class File implements Plugin {
                             try {
                                 file = await Deno.open(join(this.#path, 'index.html'), { read: true });
                             } catch (error) {
+
                                 if (error.name === 'NotFound') {
                                     return context.end(404);
                                 } else {
                                     throw error;
                                 }
+
                             }
 
                         } else {
