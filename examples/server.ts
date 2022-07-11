@@ -9,29 +9,44 @@ import {
     Normalize
 } from '../mod.ts';
 
-const port = 8080;
-const secret = 'generate-your-secret';
-const signature = 'generate-your-signature';
+import Secret from 'https://deno.land/x/xtool@0.0.6/secret/mod.ts';
 
-const sessions: string[] = [];
+const port = 8080;
+const secret = Secret(64);
+const signature = Secret(64);
+
+const users: Map<string, Record<string, number | string>> = new Map();
+const sessions: Map<string, Record<string, number | string>> = new Map();
 
 const validate = (context: Context) => {
     const { session } = context.tool.session.data;
-    if (!sessions.includes(session)) return context.end(401);
+    if (!sessions.has(session)) return context.end(401);
 };
 
 const routes = {
-    '/sign-up': (context: Context) => context.end(200, 'signed up'),
-    '/sign-out': (context: Context) => context.end(200, 'signed out'),
+    '/sign-up': (context: Context) => {
+        const { username, password } = context.tool.payload.data;
+        if (!username) return context.end(400, 'username required');
+        if (!password) return context.end(400, 'password required');
+        const id = `${username}${password}`;
+        users.set(id, { id, username, password });
+        return context.end(200, 'signed up');
+    },
+    '/sign-out': async (context: Context) => {
+        const { id } = context.tool.session.data;
+        sessions.delete(id);
+        await context.tool.session.destroy();
+        return context.end(200, 'signed out');
+    },
     '/sign-in': async (context: Context) => {
         const { username, password } = context.tool.payload.data;
-        if (username !== 'username') return context.end(400, 'username not valid');
-        if (password !== 'password') return context.end(400, 'password not valid');
+        if (!users.has(`${username}${password}`)) return context.end(400, 'credentials not valid');
         const created = Date.now();
         const expires = Date.now() + 3.6e+6;
-        const session = 'generate-your-session';
-        await context.tool.session.create({ expires, created, session });
-        sessions.push(session);
+        const id = crypto.randomUUID();
+        const data = { id, expires, created };
+        await context.tool.session.create(data);
+        sessions.set(id, data);
         return context.end(200, 'signed in');
     }
 };

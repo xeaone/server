@@ -69,7 +69,7 @@ cors.any('/*', '*'); // any method any path and CORS on any domain
 ```
 
 ### Payload
-Constructor Plugin that will
+Constructor Plugin that will parse the request body.
 ```ts
 import { Payload } from 'https://deno.land/x/xserver/mod.ts';
 const payload = new Payload();
@@ -78,7 +78,7 @@ payload.post('/*', true); // post method any path
 ```
 
 ### Router
-Constructor Plugin that will route request to Handle methods.
+Constructor Plugin that will route request to a handle method.
 
 ```ts
 import { Router } from 'https://deno.land/x/xserver/mod.ts';
@@ -87,9 +87,9 @@ router.post('/*', context => context.end(200, 'hello world')); // post method an
 ```
 
 ### File
-Constructor Plugin that will
+Constructor Plugin that will serve files. SPA mode will route all non existent files in the path folder to the `/index.html`.
 ```ts
-import { File, Router } from 'https://deno.land/x/xserver/mod.ts';
+import { File } from 'https://deno.land/x/xserver/mod.ts';
 const file = new File();
 file.spa(true);
 file.path('./web');
@@ -97,8 +97,24 @@ file.get('/*', true); // get method any path serve files from the ./web folder
 ```
 
 ### Session
-Constructor Plugin that will
+Constructor Plugin that will provide session auth.
 ```ts
+import { Session } from 'https://deno.land/x/xserver/mod.ts';
+
+const sessions = new Map();
+const session = new Session();
+
+session.validate(context => {
+    const { session } = context.tool.session.data;
+    if (!sessions.has(session)) return context.end(401); // return a response to prevent access
+});
+session.secret('secret');
+session.signature('signature');
+
+session.any('/*', true); // any method and any path is protected
+session.get('/*', false); // get method any path disable session protection
+session.post('/sign-up', false); // post method specific path disable session protection
+session.post('/sign-in', false); // post method specific path disable session protection
 ```
 
 ### Socket
