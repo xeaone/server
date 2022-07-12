@@ -40,11 +40,9 @@ export default class Handler {
                 if (typeof plugin.handle === 'function') {
 
                     const paths = plugin.data[ method ];
-                    console.log(plugin.constructor.name, method, pathname, paths);
 
                     const exact = paths.get(pathname) ?? plugin.data.any.get(pathname);
                     if (exact) {
-                        console.log(plugin.constructor.name, method, pathname, paths);
                         const response = await plugin.handle(context, exact);
                         if (response instanceof Response) return response;
                     } else if (exact !== undefined) {

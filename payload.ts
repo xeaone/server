@@ -16,6 +16,16 @@ export default class Payload extends Plugin {
         this.#parse = options?.parse ?? this.#parse;
     }
 
+    #initial () {
+        switch (this.#parse) {
+            case 'json': return {};
+            case 'text': return '';
+            case 'blob': return new Blob();
+            case 'arrayBuffer': return new ArrayBuffer(0);
+        }
+
+    }
+
     parse (parse?: Parse): this | Parse {
         if (parse === undefined) {
             return this.#parse;
@@ -26,7 +36,7 @@ export default class Payload extends Plugin {
     }
 
     setup (context: Context) {
-        context.set('payload', { data: null });
+        context.set('payload', { data: this.#initial() });
     }
 
     async handle (context: Context) {
@@ -34,7 +44,7 @@ export default class Payload extends Plugin {
         try {
             context.tool.payload.data = await context.request.clone()[ this.#parse ]();
         } catch {
-            context.tool.payload.data = {};
+            context.tool.payload.data = this.#initial();
         }
 
     }

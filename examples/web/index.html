@@ -1,0 +1,44 @@
+<h1>Hello World</h1>
+<h1 id="result"></h1>
+
+<script type="module">
+
+    // (
+    //     document.querySelector(`.${location.pathname}`)
+    //     || document.querySelector('/404')
+    // ).hidden = false;
+
+    let result;
+
+    result = await fetch('/sign-out', { method:'POST' });
+    console.log('/sign-out', 'result:', result.status, 'expected:', 401, 'text:', await result.text());
+
+    result = await fetch('/sign-in', { method:'POST', body: JSON.stringify({username:'u',password:'p'}) });
+    console.log('/sign-in', 'result:', result.status, 'expected:', 400, 'text:', await result.text());
+
+    result = await fetch('/sign-up', { method:'POST', body: JSON.stringify({username:'username',password:'password'}) });
+    console.log('/sign-up', 'result:', result.status, 'expected:', 200, 'text:', await result.text());
+
+    result = await fetch('/sign-in', { method:'POST', body: JSON.stringify({username:'username',password:'password'}) });
+    console.log('/sign-in', 'result:', result.status, 'expected:', 200, 'text:', await result.text());
+
+    result = await fetch('/sign-out', { method:'POST' });
+    console.log('/sign-out', 'result:', result.status, 'expected:', 200, 'text:', await result.text());
+
+</script>
+
+<!-- <div class="/404" hidden>
+    <h1>Not Found</h1>
+</div>
+
+<div class="/sign-up" hidden>
+
+</div>
+
+<div class="/sign-in" hidden>
+
+</div>
+
+<div class="/sign-out" hidden>
+
+</div> -->

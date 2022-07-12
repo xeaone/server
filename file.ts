@@ -40,7 +40,10 @@ export default class File extends Plugin {
     async direct (context: Context, path: string): Promise<Response> {
         if (!this.#path) throw new Error('File - path required');
 
-        path = join(this.#path, decodeURIComponent(path));
+        path = decodeURIComponent(path);
+        path = path.endsWith('/') ? `${path}index.html` : path;
+        path = join(this.#path, path);
+
         let extension = extname(path).slice(1);
 
         if (!extension) {
@@ -72,8 +75,10 @@ export default class File extends Plugin {
     async handle (context: Context): Promise<Response> {
         if (!this.#path) throw new Error('File - path required');
 
-        const { url } = context;
-        let path = join(this.#path, decodeURIComponent(url.pathname));
+        let path = decodeURIComponent(context.url.pathname);
+        path = path.endsWith('/') ? `${path}index.html` : path;
+        path = join(this.#path, path);
+
         let extension = extname(path).slice(1);
 
         if (!extension) {
@@ -85,6 +90,7 @@ export default class File extends Plugin {
 
         try {
             file = await Deno.open(path, { read: true });
+
         } catch (error) {
 
             if (error.name === 'NotFound') {

@@ -97,7 +97,7 @@ file.get('/*', true); // get method any path serve files from the ./web folder
 ```
 
 ### Session
-Constructor Plugin that will provide session auth.
+Constructor Plugin that will provide session using Secure Session Cookies https://tools.ietf.org/html/rfc6896.
 ```ts
 import { Session } from 'https://deno.land/x/xserver/mod.ts';
 
@@ -108,8 +108,9 @@ session.validate(context => {
     const { session } = context.tool.session.data;
     if (!sessions.has(session)) return context.end(401); // return a response to prevent access
 });
-session.secret('secret');
-session.signature('signature');
+
+session.secret('secret'); // unique secret
+session.signature('signature'); // unique signature
 
 session.any('/*', true); // any method and any path is protected
 session.get('/*', false); // get method any path disable session protection

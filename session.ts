@@ -73,18 +73,6 @@ export default class Session extends Plugin {
 
     }
 
-    // ingore session requirements
-    // get (...path: string[]) { path.forEach(path => this.#get.add(path)); return this; }
-    // head (...path: string[]) { path.forEach(path => this.#head.add(path)); return this; }
-    // post (...path: string[]) { path.forEach(path => this.#post.add(path)); return this; }
-    // put (...path: string[]) { path.forEach(path => this.#put.add(path)); return this; }
-    // delete (...path: string[]) { path.forEach(path => this.#delete.add(path)); return this; }
-    // connect (...path: string[]) { path.forEach(path => this.#connect.add(path)); return this; }
-    // options (...path: string[]) { path.forEach(path => this.#options.add(path)); return this; }
-    // trace (...path: string[]) { path.forEach(path => this.#trace.add(path)); return this; }
-    // patch (...path: string[]) { path.forEach(path => this.#patch.add(path)); return this; }
-    // any (...path: string[]) { path.forEach(path => this.#any.add(path)); return this; }
-
     secret (secret: string) { this.#secret = secret; return this; }
     validate (validate: Validate) { this.#validate = validate; return this; }
     signature (signature: string) { this.#signature = signature; return this; }
@@ -251,7 +239,6 @@ export default class Session extends Plugin {
         const time = Date.now();
         const parse = typeof data === 'string';
         const parsed = parse ? data : JSON.stringify(data);
-        // const parsed = this.parse ? JSON.stringify(data) : data;
         const encrypted = await this.encrypt(`${parsed}|${parse ? 'f' : 't'}`);
         const stamped = await this.stamp(time);
         const signed = await this.sign(encrypted, stamped);

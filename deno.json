@@ -1,5 +1,5 @@
 {
     "tasks": {
-        "test": "deno run --watch --allow-all examples/server.ts"
+        "example": "deno run --watch --allow-all examples/server.ts"
     }
 }

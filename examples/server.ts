@@ -19,8 +19,8 @@ const users: Map<string, Record<string, number | string>> = new Map();
 const sessions: Map<string, Record<string, number | string>> = new Map();
 
 const validate = (context: Context) => {
-    const { session } = context.tool.session.data;
-    if (!sessions.has(session)) return context.end(401);
+    const { id } = context.tool.session.data;
+    if (!sessions.has(id)) return context.end(401);
 };
 
 const routes = {
@@ -59,8 +59,8 @@ const handler = new Handler();
 const normalize = new Normalize();
 
 file.spa(true);
-file.path('./web');
 file.get('/*', true);
+file.path('./examples/web');
 
 payload.post('/*', true);
 normalize.any('/*', true);
@@ -74,32 +74,7 @@ session.get('/*', false);
 session.post('/sign-up', false);
 session.post('/sign-in', false);
 
-// Object.entries(routes).forEach(([ path, handle ]) => router.post(path, handle));
 router.post(routes);
-
-// router.get('/*', context => file.handle(context));
-
-router.get('/*', context => {
-    return context.head({ 'content-type': 'text/html' }).end(200, /*html*/`
-    <h1>Hello World</h1>
-    <script type="module">
-        let result;
-
-        result = await fetch('/sign-out', { method:'POST' });
-        console.log('/sign-out','result:', result.status, 'expected:', 401, 'text:', await result.text());
-
-        result = await fetch('/sign-in', { method:'POST', body: JSON.stringify({username:'u',password:'p'}) });
-        console.log('/sign-in','result:', result.status, 'expected:', 400, 'text:', await result.text());
-
-        result = await fetch('/sign-in', { method:'POST', body: JSON.stringify({username:'username',password:'password'}) });
-        console.log('/sign-in','result:', result.status, 'expected:', 200, 'text:', await result.text());
-
-        result = await fetch('/sign-out', { method:'POST' });
-        console.log('/sign-out','result:', result.status, 'expected:', 200, 'text:', await result.text());
-
-    </script>
-    `);
-});
 
 handler.add(normalize);
 handler.add(payload);
