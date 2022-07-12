@@ -7,7 +7,7 @@ import Plugin from './plugin.ts';
     Secure Session Cookies: https://tools.ietf.org/html/rfc6896
 */
 
-type Validate = (context: Context, data: any) => void | Response;
+type Validate = (context: Context, data: any) => Promise<Response | void> | Response | void;
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
