@@ -1,32 +1,32 @@
 {
-  "private": false,
-  "name": "@xeaone/server",
-  "type": "module",
-  "version": "0.2.3",
-  "description": "[![Total alerts](https://img.shields.io/lgtm/alerts/g/xeaone/server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xeaone/server/alerts/)\r [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/xeaone/server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xeaone/server/context:javascript)",
-  "main": "src/mod.ts",
-  "module": "src/mod.ts",
-  "directories": {
-    "src": "src",
-    "example": "examples"
-  },
-  "scripts": {
-    "major": "deno run -A deploy.ts major",
-    "minor": "deno run -A deploy.ts minor",
-    "patch": "deno run -A deploy.ts patch"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/xeaone/server.git"
-  },
-  "keywords": [
-    "deno",
-    "server"
-  ],
-  "author": "Alexander Elias",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/xeaone/server/issues"
-  },
-  "homepage": "https://github.com/xeaone/server#readme"
+    "private": false,
+    "name": "@xeaone/server",
+    "type": "module",
+    "version": "1.0.0",
+    "description": "[![Total alerts](https://img.shields.io/lgtm/alerts/g/xeaone/server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xeaone/server/alerts/)\r [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/xeaone/server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xeaone/server/context:javascript)",
+    "main": "src/mod.ts",
+    "module": "src/mod.ts",
+    "directories": {
+        "src": "src",
+        "example": "examples"
+    },
+    "scripts": {
+        "major": "deno run -A deploy.ts major",
+        "minor": "deno run -A deploy.ts minor",
+        "patch": "deno run -A deploy.ts patch"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xeaone/server.git"
+    },
+    "keywords": [
+        "deno",
+        "server"
+    ],
+    "author": "Alexander Elias",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/xeaone/server/issues"
+    },
+    "homepage": "https://github.com/xeaone/server#readme"
 }
