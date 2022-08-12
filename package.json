@@ -1,4 +1,5 @@
 {
+  "private": false,
   "name": "@xeaone/server",
   "type": "module",
   "version": "0.2.3",
@@ -6,9 +7,13 @@
   "main": "src/mod.ts",
   "module": "src/mod.ts",
   "directories": {
+    "src": "src",
     "example": "examples"
   },
   "scripts": {
+    "major": "deno run -A deploy.ts major",
+    "minor": "deno run -A deploy.ts minor",
+    "patch": "deno run -A deploy.ts patch"
   },
   "repository": {
     "type": "git",
