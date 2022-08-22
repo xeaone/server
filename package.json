@@ -11,9 +11,7 @@
         "example": "examples"
     },
     "scripts": {
-        "major": "deno run -A deploy.ts major",
-        "minor": "deno run -A deploy.ts minor",
-        "patch": "deno run -A deploy.ts patch"
+        "deploy": "deno run -A deploy.ts"
     },
     "repository": {
         "type": "git",
