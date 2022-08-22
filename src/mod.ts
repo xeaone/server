@@ -6,6 +6,7 @@ import Session from './session.ts';
 import Router from './router.ts';
 import Cors from './cors.ts';
 import File from './file.ts';
+import Mime from './mime.ts';
 
 import { serve as Server } from './deps.ts';
 
@@ -25,6 +26,7 @@ export {
     Plugin,
     Cors,
     File,
+    Mime,
 
     Normalize as normalize,
     Payload as payload,
@@ -37,10 +39,11 @@ export {
     Plugin as plugin,
     Cors as cors,
     File as file,
+    Mime as mime,
 
 };
 
-export default {
+export default Object.freeze({
 
     Normalize,
     Payload,
@@ -53,6 +56,7 @@ export default {
     Plugin,
     Cors,
     File,
+    Mime,
 
     normalize: Normalize,
     payload: Payload,
@@ -64,6 +68,7 @@ export default {
     handle: Handle,
     plugin: Plugin,
     cors: Cors,
-    file: File
+    file: File,
+    mime: Mime,
 
-} as const;
+});

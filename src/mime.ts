@@ -1,4 +1,4 @@
-export default {
+export default Object.freeze({
 
     'htm': 'text/html',
     'html': 'text/html',
@@ -117,4 +117,4 @@ export default {
 
     'default': 'text/plain'
 
-} as const;
+});
