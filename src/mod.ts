@@ -4,6 +4,7 @@ import Context from './context.ts';
 import Handler from './handler.ts';
 import Session from './session.ts';
 import Router from './router.ts';
+import Socket from './socket.ts';
 import Cors from './cors.ts';
 import File from './file.ts';
 import Mime from './mime.ts';
@@ -24,6 +25,7 @@ export {
     Router,
     Handle,
     Plugin,
+    Socket,
     Cors,
     File,
     Mime,
@@ -37,6 +39,7 @@ export {
     Router as router,
     Handle as handle,
     Plugin as plugin,
+    Socket as socket,
     Cors as cors,
     File as file,
     Mime as mime,
@@ -54,6 +57,7 @@ export default Object.freeze({
     Router,
     Handle,
     Plugin,
+    Socket,
     Cors,
     File,
     Mime,
@@ -67,6 +71,7 @@ export default Object.freeze({
     router: Router,
     handle: Handle,
     plugin: Plugin,
+    socket: Socket,
     cors: Cors,
     file: File,
     mime: Mime,
