@@ -7,7 +7,7 @@ import {
     Handler,
     Context,
     Normalize
-} from '../mod.ts';
+} from '../src/mod.ts';
 
 import Secret from 'https://deno.land/x/xtool@0.0.6/secret/mod.ts';
 
@@ -82,6 +82,6 @@ handler.add(session);
 handler.add(router);
 handler.add(file);
 
-Server(request => handler.handle(request), { port });
+await Server((request:Request) => handler.handle(request), { port });
 
-console.log(`listening: ${port}`);
+// console.log(`listening: ${port}`);

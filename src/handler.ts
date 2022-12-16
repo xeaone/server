@@ -77,7 +77,7 @@ export default class Handler {
 
                 }
 
-            } else if (type === 'function') {
+            } else if (type === 'function' || type === 'asyncfunction') {
                 const response = await plugin(context);
                 if (response instanceof Response) return response;
             } else {
