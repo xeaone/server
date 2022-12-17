@@ -75,7 +75,7 @@ export default class Context {
     end (code?: number, body?: Body): Response {
 
         this.#code = code ?? this.#code;
-        this.#message = this.#message ?? STATUS_TEXT.get(this.#code) ?? '';
+        this.#message = this.#message ?? (STATUS_TEXT as any)[this.#code] ?? '';
         this.#body = body ?? this.#body ?? this.#message ?? '';
 
         const type = Type(this.#body);
