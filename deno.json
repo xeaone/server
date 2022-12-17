@@ -1,5 +1,6 @@
 {
     "tasks": {
-        "example": "deno run --watch --allow-all examples/server.ts"
+        "d": "deno run -A deploy.ts",
+        "e": "deno run -A examples/server.ts --watch"
     }
 }
