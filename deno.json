@@ -2,5 +2,17 @@
     "tasks": {
         "d": "deno run -A deploy.ts",
         "e": "deno run -A examples/server.ts --watch"
+    },
+    "fmt": {
+        "files": {
+            "include": ["./"]
+        },
+        "options": {
+            "useTabs": false,
+            "lineWidth": 500,
+            "indentWidth": 4,
+            "singleQuote": true,
+            "proseWrap": "preserve"
+        }
     }
 }

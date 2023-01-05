@@ -2,21 +2,20 @@ import Context from './context.ts';
 import Plugin from './plugin.ts';
 
 export default class Normalize extends Plugin {
-
     #www = false;
     #https = false;
 
-    www (data: boolean) {
+    www(data: boolean) {
         this.#www = data;
         return this;
     }
 
-    https (data: boolean) {
+    https(data: boolean) {
         this.#https = data;
         return this;
     }
 
-    handle (context: Context): Response | void {
+    handle(context: Context): Response | void {
         let redirect = false;
 
         const { url } = context;
@@ -46,7 +45,5 @@ export default class Normalize extends Plugin {
         if (redirect) {
             return Response.redirect(url.href, 301);
         }
-
     }
-
 }

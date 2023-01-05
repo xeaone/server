@@ -1,13 +1,4 @@
-import {
-    File,
-    Server,
-    Router,
-    Payload,
-    Session,
-    Handler,
-    Context,
-    Normalize
-} from '../src/mod.ts';
+import { Context, File, Handler, Normalize, Payload, Router, Server, Session } from '../src/mod.ts';
 
 import Secret from 'https://deno.land/x/xtool@0.0.6/secret/mod.ts';
 
@@ -48,7 +39,7 @@ const routes = {
         await context.tool.session.create(data);
         sessions.set(id, data);
         return context.end(200, 'signed in');
-    }
+    },
 };
 
 const file = new File();
@@ -82,6 +73,6 @@ handler.add(session);
 handler.add(router);
 handler.add(file);
 
-await Server((request:Request) => handler.handle(request), { port });
+await Server((request: Request) => handler.handle(request), { port });
 
 // console.log(`listening: ${port}`);

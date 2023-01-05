@@ -1,4 +1,3 @@
-
 // function logError (msg: string) {
 //     console.log(msg);
 //     Deno.exit(1);
@@ -43,7 +42,6 @@ function message(e: MessageEvent) {
 }
 
 try {
-
     const ws = new WebSocket('ws://localhost:8000');
 
     ws.onopen = open;

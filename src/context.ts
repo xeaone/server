@@ -1,10 +1,9 @@
-import { STATUS_TEXT, Status, media } from './deps.ts';
+import { media, Status, STATUS_TEXT } from './deps.ts';
 import Type from './type.ts';
 
 type Body = BodyInit | Record<string, any> | Array<any> | null | undefined;
 
 export default class Context {
-
     tool: Record<string, any> = {};
 
     url: URL;
@@ -17,25 +16,25 @@ export default class Context {
     #body: Body;
     #message?: string;
 
-    constructor (request: Request) {
+    constructor(request: Request) {
         this.request = request;
         this.headers = new Headers();
         this.url = new URL(request.url);
         this.method = request.method.toLowerCase();
     }
 
-    get (name: string) {
-        return this.tool[ name ];
+    get(name: string) {
+        return this.tool[name];
     }
 
-    set (name: string, value: any) {
+    set(name: string, value: any) {
         if (name in this.tool) return;
         const enumerable = true;
         const property = { enumerable, value };
         Object.defineProperty(this.tool, name, property);
     }
 
-    code (code?: Status): this | Status | any {
+    code(code?: Status): this | Status | any {
         if (code) {
             this.#code = code;
             return this;
@@ -44,7 +43,7 @@ export default class Context {
         }
     }
 
-    message (message?: string): this | string | undefined | any {
+    message(message?: string): this | string | undefined | any {
         if (message) {
             this.#message = message;
             return this;
@@ -53,16 +52,16 @@ export default class Context {
         }
     }
 
-    head (head?: Record<string, string>): this | Record<string, string> | any {
+    head(head?: Record<string, string>): this | Record<string, string> | any {
         if (head) {
-            Object.entries(head).forEach(([ name, value ]) => this.headers.append(name, value));
+            Object.entries(head).forEach(([name, value]) => this.headers.append(name, value));
             return this;
         } else {
             return Object.fromEntries(this.headers);
         }
     }
 
-    body (body?: Body): this | Body | any {
+    body(body?: Body): this | Body | any {
         if (body) {
             this.#body = body;
             return this;
@@ -71,8 +70,7 @@ export default class Context {
         }
     }
 
-    end (code?: Status, body?: Body): Response {
-
+    end(code?: Status, body?: Body): Response {
         this.#code = code ?? this.#code;
         this.#message = this.#message ?? STATUS_TEXT[this.#code as Status] ?? '';
         this.#body = body ?? this.#body ?? this.#message ?? '';
@@ -85,11 +83,8 @@ export default class Context {
             if (!this.headers.has('content-type')) {
                 this.headers.set('content-type', media.contentType('json'));
             }
-
         }
 
         return new Response(this.#body as BodyInit, { status: this.#code, statusText: this.#message, headers: this.headers });
     }
-
-
 }

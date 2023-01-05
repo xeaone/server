@@ -1,4 +1,4 @@
-import { readableStreamFromReader, extname, join, media } from './deps.ts';
+import { extname, join, media, readableStreamFromReader } from './deps.ts';
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
@@ -8,17 +8,16 @@ interface Options {
 }
 
 export default class File extends Plugin {
-
     #path = '';
     #spa = false;
 
-    constructor (options?: Options) {
+    constructor(options?: Options) {
         super();
         this.#spa = options?.spa ?? this.#spa;
         this.#path = options?.path ?? this.#path;
     }
 
-    spa (data?: boolean): this | boolean {
+    spa(data?: boolean): this | boolean {
         if (data === undefined) {
             return this.#spa;
         } else {
@@ -27,7 +26,7 @@ export default class File extends Plugin {
         }
     }
 
-    path (data?: string): this | string {
+    path(data?: string): this | string {
         if (data === undefined) {
             return this.#path;
         } else {
@@ -36,7 +35,7 @@ export default class File extends Plugin {
         }
     }
 
-    async direct (context: Context, path: string): Promise<Response> {
+    async direct(context: Context, path: string): Promise<Response> {
         if (!this.#path) throw new Error('File - path required');
 
         path = decodeURIComponent(path);
@@ -71,7 +70,7 @@ export default class File extends Plugin {
         return context.end(200, readableStream);
     }
 
-    async handle (context: Context): Promise<Response> {
+    async handle(context: Context): Promise<Response> {
         if (!this.#path) throw new Error('File - path required');
 
         let path = decodeURIComponent(context.url.pathname);
@@ -89,11 +88,8 @@ export default class File extends Plugin {
 
         try {
             file = await Deno.open(path, { read: true });
-
         } catch (error) {
-
             if (error.name === 'NotFound') {
-
                 if (!path.endsWith('.html') && path.includes('.')) {
                     return context.end(404);
                 }
@@ -102,37 +98,27 @@ export default class File extends Plugin {
                     path = join(path.slice(0, -5), 'index.html');
                     file = await Deno.open(path, { read: true });
                 } catch (error) {
-
                     if (error.name === 'NotFound') {
-
                         if (this.#spa) {
-
                             try {
                                 file = await Deno.open(join(this.#path, 'index.html'), { read: true });
                             } catch (error) {
-
                                 if (error.name === 'NotFound') {
                                     return context.end(404);
                                 } else {
                                     throw error;
                                 }
-
                             }
-
                         } else {
                             return context.end(404);
                         }
-
                     } else {
                         throw error;
                     }
-
                 }
-
             } else {
                 throw error;
             }
-
         }
 
         if (!context.headers.has('content-type')) {
@@ -143,5 +129,4 @@ export default class File extends Plugin {
         const readableStream = readableStreamFromReader(file);
         return context.end(200, readableStream);
     }
-
 }

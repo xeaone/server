@@ -5,21 +5,17 @@ type Data = string | boolean | Handle;
 type Method = 'get' | 'head' | 'post' | 'put' | 'delete' | 'connect' | 'options' | 'trace' | 'patch' | 'any';
 
 export default abstract class Plugin {
+    abstract handle(context: Context, data?: Data): Promise<Response | void> | Response | void;
 
-    abstract handle (context: Context, data?: Data): Promise<Response | void> | Response | void;
-
-    #map (method: Method, data: string | { [ path: string ]: string | boolean | Handle; }, value?: string | boolean | Handle): this {
-
+    #map(method: Method, data: string | { [path: string]: string | boolean | Handle }, value?: string | boolean | Handle): this {
         if (typeof data === 'string') {
-
             if (value === undefined) {
                 throw new Error(`${this.constructor.name} Plugin - ${method} value required`);
             }
 
-            this.data[ method ].set(data, value);
-
+            this.data[method].set(data, value);
         } else {
-            Object.entries(data).forEach(([ name, value ]) => this.data[ method ].set(name, value));
+            Object.entries(data).forEach(([name, value]) => this.data[method].set(name, value));
         }
 
         return this;
@@ -48,5 +44,4 @@ export default abstract class Plugin {
     readonly trace = this.#map.bind(this, 'trace');
     readonly patch = this.#map.bind(this, 'patch');
     readonly any = this.#map.bind(this, 'any');
-
 }

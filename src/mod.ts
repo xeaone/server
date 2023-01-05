@@ -13,38 +13,9 @@ import { serve as Server } from './deps.ts';
 import * as Handle from './handle.ts';
 import * as Plugin from './plugin.ts';
 
-export {
-
-    Normalize,
-    Payload,
-    Context,
-    Handler,
-    Session,
-    Server,
-    Router,
-    Handle,
-    Plugin,
-    Socket,
-    Cors,
-    File,
-
-    Normalize as normalize,
-    Payload as payload,
-    Context as context,
-    Handler as handler,
-    Session as session,
-    Server as server,
-    Router as router,
-    Handle as handle,
-    Plugin as plugin,
-    Socket as socket,
-    Cors as cors,
-    File as file,
-
-};
+export { Context, Context as context, Cors, Cors as cors, File, File as file, Handle, Handle as handle, Handler, Handler as handler, Normalize, Normalize as normalize, Payload, Payload as payload, Plugin, Plugin as plugin, Router, Router as router, Server, Server as server, Session, Session as session, Socket, Socket as socket };
 
 export default Object.freeze({
-
     Normalize,
     Payload,
     Context,
@@ -70,5 +41,4 @@ export default Object.freeze({
     socket: Socket,
     cors: Cors,
     file: File,
-
 });

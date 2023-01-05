@@ -1,31 +1,29 @@
 import { serve } from 'https://deno.land/std/http/mod.ts';
 
-function open (e: Event) {
+function open(e: Event) {
     // const w = e.target as WebSocket;
     console.log('open');
 }
 
-function close (e: Event) {
+function close(e: Event) {
     // const w = e.target as WebSocket;
     console.log('close');
 }
 
-function error (e: Event) {
+function error(e: Event) {
     // const w = e.target as WebSocket;
     console.log('error');
 }
 
-function message (e: MessageEvent) {
+function message(e: MessageEvent) {
     const w = e.target as WebSocket;
     console.log('server message: ', e.data);
     w.send(new Date().toString());
 }
 
-function request (req: Request) {
-
+function request(req: Request) {
     if (req.headers.get('upgrade')) {
-
-        if (req.headers.get("upgrade") !== "websocket") {
+        if (req.headers.get('upgrade') !== 'websocket') {
             return new Response(null, { status: 501 });
         }
 

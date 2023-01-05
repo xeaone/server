@@ -1,4 +1,4 @@
-import { Status, STATUS_TEXT, base64url } from './deps.ts';
+import { base64url, Status, STATUS_TEXT } from './deps.ts';
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
@@ -32,7 +32,6 @@ interface Options {
 }
 
 export default class Session extends Plugin {
-
     scheme = 'scheme';
     name: string;
     realm: string;
@@ -50,7 +49,7 @@ export default class Session extends Plugin {
     #signature?: string;
     #validate?: Validate;
 
-    constructor (options?: Options) {
+    constructor(options?: Options) {
         super();
 
         this.maxAge = options?.maxAge;
@@ -70,14 +69,22 @@ export default class Session extends Plugin {
         this.salt = options?.salt ?? 16;
         this.vector = options?.vector ?? 16;
         this.iterations = options?.iterations ?? 10000;
-
     }
 
-    secret (secret: string) { this.#secret = secret; return this; }
-    validate (validate: Validate) { this.#validate = validate; return this; }
-    signature (signature: string) { this.#signature = signature; return this; }
+    secret(secret: string) {
+        this.#secret = secret;
+        return this;
+    }
+    validate(validate: Validate) {
+        this.#validate = validate;
+        return this;
+    }
+    signature(signature: string) {
+        this.#signature = signature;
+        return this;
+    }
 
-    async encrypt (data: string, secret?: string) {
+    async encrypt(data: string, secret?: string) {
         secret = secret || this.#secret;
 
         if (!data) throw new Error('Session - data required');
@@ -91,7 +98,7 @@ export default class Session extends Plugin {
             encoder.encode(secret),
             { name: 'PBKDF2' },
             false,
-            [ 'deriveBits', 'deriveKey' ]
+            ['deriveBits', 'deriveKey'],
         );
 
         const key = await crypto.subtle.deriveKey(
@@ -104,23 +111,25 @@ export default class Session extends Plugin {
             material,
             { name: 'AES-CBC', length: 256 },
             false,
-            [ 'encrypt', 'decrypt' ]
+            ['encrypt', 'decrypt'],
         );
 
         const encrypted = await crypto.subtle.encrypt(
             { name: 'AES-CBC', iv: vector },
             key,
-            encoder.encode(data)
+            encoder.encode(data),
         );
 
-        return base64url.encode(new Uint8Array([
-            ...salt,
-            ...vector,
-            ...new Uint8Array(encrypted)
-        ]));
+        return base64url.encode(
+            new Uint8Array([
+                ...salt,
+                ...vector,
+                ...new Uint8Array(encrypted),
+            ]),
+        );
     }
 
-    async decrypt (encrypted: string, secret?: string) {
+    async decrypt(encrypted: string, secret?: string) {
         secret = secret || this.#secret;
 
         if (!encrypted) throw new Error('Session - encrypted required');
@@ -137,7 +146,7 @@ export default class Session extends Plugin {
             encoder.encode(secret),
             { name: 'PBKDF2' },
             false,
-            [ 'deriveBits', 'deriveKey' ]
+            ['deriveBits', 'deriveKey'],
         );
 
         const key = await crypto.subtle.deriveKey(
@@ -150,20 +159,23 @@ export default class Session extends Plugin {
             material,
             { name: 'AES-CBC', length: 256 },
             true,
-            [ 'encrypt', 'decrypt' ]
+            ['encrypt', 'decrypt'],
         );
 
-        const decrypted = decoder.decode(await crypto.subtle.decrypt(
-            { name: 'AES-CBC', iv: vector },
-            key, data
-        ));
+        const decrypted = decoder.decode(
+            await crypto.subtle.decrypt(
+                { name: 'AES-CBC', iv: vector },
+                key,
+                data,
+            ),
+        );
 
-        const [ content, parse ] = decrypted.split('|');
+        const [content, parse] = decrypted.split('|');
 
         return parse === 't' ? JSON.parse(content) : content;
     }
 
-    async sign (encrypted: string, stamped: string, signature?: string) {
+    async sign(encrypted: string, stamped: string, signature?: string) {
         signature = signature || this.#signature;
 
         if (!encrypted) throw new Error('Session - encrypted required');
@@ -175,19 +187,19 @@ export default class Session extends Plugin {
             encoder.encode(signature),
             { name: 'HMAC', hash: 'SHA-256' },
             false,
-            [ 'sign', 'verify' ]
+            ['sign', 'verify'],
         );
 
         const signed = await crypto.subtle.sign(
             'HMAC',
             key,
-            encoder.encode(`${encrypted}|${stamped}`)
+            encoder.encode(`${encrypted}|${stamped}`),
         );
 
         return base64url.encode(signed);
     }
 
-    async unsign (encrypted: string, stamped: string, signed: string, signature?: string) {
+    async unsign(encrypted: string, stamped: string, signed: string, signature?: string) {
         signature = signature || this.#signature;
 
         if (!encrypted) throw new Error('Session - encrypted required');
@@ -202,27 +214,29 @@ export default class Session extends Plugin {
             encoder.encode(signature),
             { name: 'HMAC', hash: 'SHA-256' },
             false,
-            [ 'sign', 'verify' ]
+            ['sign', 'verify'],
         );
 
-        const computed = new Uint8Array(await crypto.subtle.sign(
-            'HMAC',
-            key,
-            encoder.encode(`${encrypted}|${stamped}`)
-        ));
+        const computed = new Uint8Array(
+            await crypto.subtle.sign(
+                'HMAC',
+                key,
+                encoder.encode(`${encrypted}|${stamped}`),
+            ),
+        );
 
         if (computed.byteLength !== decoded.byteLength) return false;
 
         return decoder.decode(computed) === decoder.decode(decoded);
     }
 
-    stamp (time: number) {
+    stamp(time: number) {
         if (!time) throw new Error('Session - time required');
         const expiration = time + this.expiration;
         return base64url.encode(`${expiration}`);
     }
 
-    unstamp (time: string) {
+    unstamp(time: string) {
         if (!time) throw new Error('Session - time required');
 
         const decoded = decoder.decode(base64url.decode(time));
@@ -233,7 +247,7 @@ export default class Session extends Plugin {
         return Date.now() < expiration;
     }
 
-    async create (context: Context, data: string | Record<string, unknown>) {
+    async create(context: Context, data: string | Record<string, unknown>) {
         if (!data) throw new Error('Session - data required');
 
         const time = Date.now();
@@ -257,7 +271,7 @@ export default class Session extends Plugin {
         context.headers.append('set-cookie', cookie);
     }
 
-    destroy (context: Context) {
+    destroy(context: Context) {
         let cookie = '';
 
         if (this.secure) cookie += ';Secure';
@@ -269,21 +283,21 @@ export default class Session extends Plugin {
         context.headers.append('set-cookie', cookie);
     }
 
-    forbidden () {
+    forbidden() {
         return new Response(STATUS_TEXT[Status.Forbidden], { status: Status.Forbidden });
     }
 
-    unauthorized () {
+    unauthorized() {
         const headers = { 'www-authenticate': `${this.scheme} realm="${this.realm}"` };
         return new Response(STATUS_TEXT[Status.Unauthorized], { status: Status.Unauthorized, headers });
     }
 
-    cookie (context: Context) {
+    cookie(context: Context) {
         const header = context.request.headers.get('cookie') || '';
         const cookies = header.split(/\s*;\s*/);
 
         for (const cookie of cookies) {
-            const [ name, value ] = cookie.split(/\s*=\s*/);
+            const [name, value] = cookie.split(/\s*=\s*/);
             if (name === this.name) {
                 return decodeURIComponent(value);
             }
@@ -292,18 +306,15 @@ export default class Session extends Plugin {
         return null;
     }
 
-    setup (context: Context) {
-
+    setup(context: Context) {
         context.set('session', {
             data: null,
             create: this.create.bind(this, context),
-            destroy: this.destroy.bind(this, context)
+            destroy: this.destroy.bind(this, context),
         });
-
     }
 
-    async handle (context: Context) {
-
+    async handle(context: Context) {
         if (typeof this.#validate !== 'function') {
             throw new Error('Session - validate required');
         }
@@ -314,7 +325,7 @@ export default class Session extends Plugin {
         const unboxed = cookie.split('|');
         if (unboxed.length !== 3) return this.unauthorized();
 
-        const [ encrypted, stamped, signed ] = unboxed;
+        const [encrypted, stamped, signed] = unboxed;
 
         const unsigned = await this.unsign(encrypted, stamped, signed);
         if (!unsigned) return this.unauthorized();
@@ -330,7 +341,6 @@ export default class Session extends Plugin {
 
         return validate;
     }
-
 }
 
 // const secret = 'secret';

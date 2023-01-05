@@ -4,14 +4,13 @@ import Plugin from './plugin.ts';
 import Type from './type.ts';
 
 export default class Handler {
-
     #plugins: Set<Handle | Plugin> = new Set();
 
-    add (plugin: Handle | Plugin) {
+    add(plugin: Handle | Plugin) {
         this.#plugins.add(plugin);
     }
 
-    async handle (request: Request) {
+    async handle(request: Request) {
         const context = new Context(request);
         const iterator = this.#plugins.values();
 
@@ -26,7 +25,6 @@ export default class Handler {
             const type = Type(plugin);
 
             if (type === 'object') {
-
                 // if (plugin.constructor.name in context.tool) {
                 //     throw new Error('Handler - duplicate plugin');
                 // }
@@ -38,8 +36,7 @@ export default class Handler {
                 }
 
                 if (typeof plugin.handle === 'function') {
-
-                    const paths = plugin.data[ method ];
+                    const paths = plugin.data[method];
 
                     const exact = paths.get(pathname) ?? plugin.data.any.get(pathname);
                     if (exact) {
@@ -63,7 +60,6 @@ export default class Handler {
                             result = iterator.next();
                             continue main;
                         }
-
                     }
 
                     const any = paths.get('/*') ?? paths.get('*') ?? plugin.data.any.get('/*') ?? plugin.data.any.get('*');
@@ -74,9 +70,7 @@ export default class Handler {
                         result = iterator.next();
                         continue main;
                     }
-
                 }
-
             } else if (type === 'function' || type === 'asyncfunction') {
                 const response = await plugin(context);
                 if (response instanceof Response) return response;
@@ -89,5 +83,4 @@ export default class Handler {
 
         return new Response('Not Found', { status: 404 });
     }
-
 }
