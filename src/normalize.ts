@@ -20,12 +20,29 @@ export default class Normalize extends Plugin {
 
         const { url } = context;
 
-        const path = '/' + url.pathname
-            .replace(/\/index\.html$/, '') // remove .html
-            .replace(/\/(.*?)\.html$/, '$1') // remove .html
-            .replace(/\/+/g, '/')
-            .replace(/^\/|\/$/g, '')
-            .toLowerCase();
+        let path = url.pathname.toLowerCase();
+
+        if (path.endsWith('/index.html')) {
+            path = path.slice(0, -11);
+        }
+
+        if (path.endsWith('.html')) {
+            path = path.slice(0, -5);
+        }
+
+        if (path.includes('//')) {
+            path = path.replace('//', '/');
+        }
+
+        if (path.startsWith('/')) {
+            path = path.slice(1);
+        }
+
+        if (path.endsWith('/')) {
+            path = path.slice(0, -1);
+        }
+
+        path = '/' + path;
 
         if (this.#https && url.protocol === 'http:') {
             redirect = true;
