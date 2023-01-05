@@ -1,5 +1,5 @@
 [![CodeQL](https://github.com/xeaone/server/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/xeaone/server/actions/workflows/codeql-analysis.yml)
-[![GitHub](https://img.shields.io/github/license/xeaone/server)
+![GitHub](https://img.shields.io/github/license/xeaone/server)
 
 # X-Server
 
