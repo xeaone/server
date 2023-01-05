@@ -1,9 +1,9 @@
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/xeaone/server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xeaone/server/alerts/)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/xeaone/server.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xeaone/server/context:javascript)
+[![CodeQL](https://github.com/xeaone/server/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/xeaone/server/actions/workflows/codeql-analysis.yml)
+![GitHub](https://img.shields.io/github/license/xeaone/server)
 
 # X-Server
 
-A Deno server module. Coming Soon.
+Deno server module.
 
 ## Use
 
@@ -33,7 +33,7 @@ console.log(`listening: ${port}`);
 
 ### Server
 
-Wraps Deno Serve `{ serve } from 'https://deno.land/std@0.134.0/http/server.ts';`
+Wraps Deno Serve
 
 ### Handler
 
