@@ -1,3 +1,5 @@
+import { serve as Server } from './deps.ts';
+
 import Normalize from './normalize.ts';
 import Payload from './payload.ts';
 import Context from './context.ts';
@@ -8,12 +10,47 @@ import Socket from './socket.ts';
 import Cors from './cors.ts';
 import File from './file.ts';
 
-import { serve as Server } from './deps.ts';
-
 import * as Handle from './handle.ts';
 import * as Plugin from './plugin.ts';
 
-export { Context, Context as context, Cors, Cors as cors, File, File as file, Handle, Handle as handle, Handler, Handler as handler, Normalize, Normalize as normalize, Payload, Payload as payload, Plugin, Plugin as plugin, Router, Router as router, Server, Server as server, Session, Session as session, Socket, Socket as socket };
+// deno-fmt-ignore
+export {
+    Context,
+    Context as context,
+
+    Cors,
+    Cors as cors,
+
+    File,
+    File as file,
+
+    Handle,
+    Handle as handle,
+
+    Handler,
+    Handler as handler,
+
+    Normalize,
+    Normalize as normalize,
+
+    Payload,
+    Payload as payload,
+
+    Plugin,
+    Plugin as plugin,
+
+    Router,
+    Router as router,
+
+    Server,
+    Server as server,
+
+    Session,
+    Session as session,
+
+    Socket,
+    Socket as socket
+};
 
 export default Object.freeze({
     Normalize,
