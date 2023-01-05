@@ -17,22 +17,14 @@ export default class File extends Plugin {
         this.#path = options?.path ?? this.#path;
     }
 
-    spa(data?: boolean): this | boolean {
-        if (data === undefined) {
-            return this.#spa;
-        } else {
-            this.#spa = data;
-            return this;
-        }
+    spa(data: boolean): this {
+        this.#spa = data;
+        return this;
     }
 
-    path(data?: string): this | string {
-        if (data === undefined) {
-            return this.#path;
-        } else {
-            this.#path = data;
-            return this;
-        }
+    path(data: string): this {
+        this.#path = data;
+        return this;
     }
 
     async direct(context: Context, path: string): Promise<Response> {
