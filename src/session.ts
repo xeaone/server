@@ -270,12 +270,12 @@ export default class Session extends Plugin {
     }
 
     forbidden () {
-        return new Response(STATUS_TEXT.get(Status.Forbidden), { status: Status.Forbidden });
+        return new Response(STATUS_TEXT[Status.Forbidden], { status: Status.Forbidden });
     }
 
     unauthorized () {
         const headers = { 'www-authenticate': `${this.scheme} realm="${this.realm}"` };
-        return new Response(STATUS_TEXT.get(Status.Unauthorized), { status: Status.Unauthorized, headers });
+        return new Response(STATUS_TEXT[Status.Unauthorized], { status: Status.Unauthorized, headers });
     }
 
     cookie (context: Context) {

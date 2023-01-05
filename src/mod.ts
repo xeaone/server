@@ -7,7 +7,6 @@ import Router from './router.ts';
 import Socket from './socket.ts';
 import Cors from './cors.ts';
 import File from './file.ts';
-import Mime from './mime.ts';
 
 import { serve as Server } from './deps.ts';
 
@@ -28,7 +27,6 @@ export {
     Socket,
     Cors,
     File,
-    Mime,
 
     Normalize as normalize,
     Payload as payload,
@@ -42,7 +40,6 @@ export {
     Socket as socket,
     Cors as cors,
     File as file,
-    Mime as mime,
 
 };
 
@@ -60,7 +57,6 @@ export default Object.freeze({
     Socket,
     Cors,
     File,
-    Mime,
 
     normalize: Normalize,
     payload: Payload,
@@ -74,6 +70,5 @@ export default Object.freeze({
     socket: Socket,
     cors: Cors,
     file: File,
-    mime: Mime,
 
 });

@@ -1,7 +1,6 @@
-import { readableStreamFromReader, extname, join } from './deps.ts';
+import { readableStreamFromReader, extname, join, media } from './deps.ts';
 import Context from './context.ts';
 import Plugin from './plugin.ts';
-import Mime from './mime.ts';
 
 interface Options {
     spa?: boolean;
@@ -64,8 +63,8 @@ export default class File extends Plugin {
         }
 
         if (!context.headers.has('content-type')) {
-            const mime = Mime[ extension as keyof typeof Mime ] ?? Mime[ 'default' ];
-            context.headers.set('content-type', `${mime};charset=utf8`);
+            const contentType = media.contentType(extension) ?? media.contentType('txt');
+            context.headers.set('content-type', contentType);
         }
 
         const readableStream = readableStreamFromReader(file);
@@ -137,8 +136,8 @@ export default class File extends Plugin {
         }
 
         if (!context.headers.has('content-type')) {
-            const mime = Mime[ extension as keyof typeof Mime ] ?? Mime[ 'default' ];
-            context.headers.set('content-type', `${mime};charset=utf8`);
+            const contentType = media.contentType(extension) ?? media.contentType('txt');
+            context.headers.set('content-type', contentType);
         }
 
         const readableStream = readableStreamFromReader(file);

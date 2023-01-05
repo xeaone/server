@@ -1,5 +1,4 @@
-import { STATUS_TEXT, } from './deps.ts';
-import Mime from './mime.ts';
+import { STATUS_TEXT, Status, media } from './deps.ts';
 import Type from './type.ts';
 
 type Body = BodyInit | Record<string, any> | Array<any> | null | undefined;
@@ -36,7 +35,7 @@ export default class Context {
         Object.defineProperty(this.tool, name, property);
     }
 
-    code (code?: number): this | number | any {
+    code (code?: Status): this | Status | any {
         if (code) {
             this.#code = code;
             return this;
@@ -72,10 +71,10 @@ export default class Context {
         }
     }
 
-    end (code?: number, body?: Body): Response {
+    end (code?: Status, body?: Body): Response {
 
         this.#code = code ?? this.#code;
-        this.#message = this.#message ?? (STATUS_TEXT as any)[this.#code] ?? '';
+        this.#message = this.#message ?? STATUS_TEXT[this.#code as Status] ?? '';
         this.#body = body ?? this.#body ?? this.#message ?? '';
 
         const type = Type(this.#body);
@@ -84,7 +83,7 @@ export default class Context {
             this.#body = JSON.stringify(this.#body);
 
             if (!this.headers.has('content-type')) {
-                this.headers.set('content-type', `${Mime[ 'json' ]};charset=utf8`);
+                this.headers.set('content-type', media.contentType('json'));
             }
 
         }
