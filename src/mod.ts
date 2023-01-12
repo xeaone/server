@@ -1,5 +1,7 @@
+// deno-fmt-ignore-file
 import { serve as Server } from './deps.ts';
 
+import Forwarded from './forwarded.ts';
 import Normalize from './normalize.ts';
 import Payload from './payload.ts';
 import Context from './context.ts';
@@ -13,7 +15,6 @@ import File from './file.ts';
 import * as Handle from './handle.ts';
 import * as Plugin from './plugin.ts';
 
-// deno-fmt-ignore
 export {
     Context,
     Context as context,
@@ -29,6 +30,9 @@ export {
 
     Handler,
     Handler as handler,
+
+    Forwarded,
+    Forwarded as forwarded,
 
     Normalize,
     Normalize as normalize,
@@ -53,6 +57,7 @@ export {
 };
 
 export default Object.freeze({
+    Forwarded,
     Normalize,
     Payload,
     Context,
@@ -66,6 +71,7 @@ export default Object.freeze({
     Cors,
     File,
 
+    forwarded: Forwarded,
     normalize: Normalize,
     payload: Payload,
     context: Context,

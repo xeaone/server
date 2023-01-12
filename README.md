@@ -10,9 +10,8 @@ Deno server module.
 https://deno.land/x/xserver/src/mod.ts
 
 ```ts
-import { Handler, Normalize, Router, Server } from 'https://deno.land/x/xserver/src/mod.ts';
-
-const port = 8080;
+import { Normalize, Router } from 'https://deno.land/x/xserver/src/mod.ts';
+import { Handler, Server } from 'https://deno.land/x/xserver/src/mod.ts';
 
 const router = new Router();
 const handler = new Handler();
@@ -26,9 +25,7 @@ router.post('/post', (context) => context.end(200, 'post'));
 handler.add(normalize);
 handler.add(router);
 
-Server((request) => handler.handle(request), { port });
-
-console.log(`listening: ${port}`);
+await Server(request => handler.handle(request), { port: 8080 });
 ```
 
 ### Server
@@ -47,7 +44,7 @@ const normalize = new Normalize();
 
 handler.add(normalize);
 
-Server((request) => handler.handle(request));
+await Server(request => handler.handle(request));
 ```
 
 ### Normalize
@@ -59,7 +56,7 @@ import { Normalize } from 'https://deno.land/x/xserver/src/mod.ts';
 const normalize = new Normalize();
 normalize.www(true); // redirects www to non www
 normalize.https(true); // redirects http to https
-normalize.any('/*', true); // normalize all methos and all paths
+normalize.any('/*', true); // any method and any path Normalize
 ```
 
 ### Cors
@@ -107,7 +104,6 @@ file.get('/*', true); // get method any path serve files from the ./web folder
 ```
 
 ### Session
-
 Constructor Plugin that will provide session using Secure Session Cookies https://tools.ietf.org/html/rfc6896.
 
 ```ts
@@ -129,6 +125,38 @@ session.get('/*', false); // get method any path disable session protection
 session.post('/sign-up', false); // post method specific path disable session protection
 session.post('/sign-in', false); // post method specific path disable session protection
 ```
+
+### Forwarded
+Constructor Plugin that will parse the `forwarded` header.
+This is good for getting client/remote IP address behind a proxy/loadbalancer.
+
+```ts
+import { Forwarded } from 'https://deno.land/x/xserver/src/mod.ts';
+import { Handler, Server } from 'https://deno.land/x/xserver/src/mod.ts';
+
+const forwarded = new Forwarded();
+const handler = new Handler();
+
+forwarded.any('/*', true); // any method and any path parse forwarded header
+
+handler.add(forwarded);
+
+/*
+    type ForwardedData = {
+        by: Array<string>;
+        for: Array<string>;
+        host: Array<string>;
+        proto: Array<string>;
+    };
+*/
+handler.add(function (context) {
+    const { for: [ client ] } = context.tool.forwarded.data;
+    return context.end(200, client);
+});
+
+await Server(request => handler.handle(request), { port: 8080 });
+```
+
 
 ### Socket
 
