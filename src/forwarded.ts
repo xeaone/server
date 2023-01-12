@@ -13,7 +13,8 @@ type ForwardedData = {
 };
 
 export default class Forwarded extends Plugin {
-    handle(context: Context) {
+
+    setup(context: Context) {
         const data: ForwardedData = {
             by: [],
             for: [],
@@ -21,6 +22,10 @@ export default class Forwarded extends Plugin {
             proto: [],
         };
 
+        context.set('forwarded', { data });
+    }
+
+    handle(context: Context) {
         const forwarded = context.request.headers.get('forwarded') ?? context.request.headers.get('Forwarded') ?? '';
 
         const parts = forwarded.toLowerCase().split(';');
@@ -40,10 +45,9 @@ export default class Forwarded extends Plugin {
 
                 const value = itemValue.startsWith('"') && itemValue.endsWith('"') ? itemValue.slice(1, -1) : itemValue;
 
-                data[name].push(value);
+                context.tool.forwarded.data[name].push(value);
             }
         }
 
-        context.tool.forwarded.data = data;
     }
 }
