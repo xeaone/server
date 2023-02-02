@@ -264,7 +264,7 @@ export default class Session extends Plugin {
         if (this.sameSite) cookie += `;SameSite=${this.sameSite}`;
 
         if (this.maxAge) cookie += `;Max-Age=${this.maxAge}`;
-        else cookie += `;Max-Age=${time + this.expiration}`;
+        else cookie += `;Expires=${new Date(time + this.expiration).toUTCString()}`;
 
         if (encoder.encode(cookie).length > 4090) throw new Error('Session - cookie size invalid');
 
