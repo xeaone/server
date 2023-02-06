@@ -25,11 +25,6 @@ export default class Handler {
             const type = Type(plugin);
 
             if (type === 'object') {
-                // if (plugin.constructor.name in context.tool) {
-                //     throw new Error('Handler - duplicate plugin');
-                // }
-
-                // context.set(plugin.constructor.name.toLowerCase(), plugin);
 
                 if (typeof plugin.setup === 'function') {
                     await plugin.setup(context);
@@ -42,7 +37,9 @@ export default class Handler {
                     if (exact) {
                         const response = await plugin.handle(context, exact);
                         if (response instanceof Response) return response;
-                    } else if (exact !== undefined) {
+                    }
+
+                    if (exact !== undefined) {
                         result = iterator.next();
                         continue main;
                     }
@@ -53,20 +50,26 @@ export default class Handler {
                         path += part ? `/${part}` : part;
 
                         const dynamic = paths.get(`${path}/*`) ?? plugin.data.any.get(`${path}/*`);
+
                         if (dynamic) {
                             const response = await plugin.handle(context, dynamic);
                             if (response instanceof Response) return response;
-                        } else if (dynamic !== undefined) {
+                        }
+
+                        if (dynamic !== undefined) {
                             result = iterator.next();
                             continue main;
                         }
                     }
 
                     const any = paths.get('/*') ?? paths.get('*') ?? plugin.data.any.get('/*') ?? plugin.data.any.get('*');
+
                     if (any) {
                         const response = await plugin.handle(context, any);
                         if (response instanceof Response) return response;
-                    } else if (any !== undefined) {
+                    }
+
+                    if (any !== undefined) {
                         result = iterator.next();
                         continue main;
                     }
