@@ -9,6 +9,7 @@ import Handler from './handler.ts';
 import Session from './session.ts';
 import Router from './router.ts';
 import Socket from './socket.ts';
+import Cache from './cache.ts';
 import Cors from './cors.ts';
 import File from './file.ts';
 
@@ -24,6 +25,9 @@ export {
 
     File,
     File as file,
+
+    Cache,
+    Cache as cache,
 
     Handle,
     Handle as handle,
@@ -68,8 +72,9 @@ export default Object.freeze({
     Handle,
     Plugin,
     Socket,
-    Cors,
+    Cache,
     File,
+    Cors,
 
     forwarded: Forwarded,
     normalize: Normalize,
@@ -82,6 +87,7 @@ export default Object.freeze({
     handle: Handle,
     plugin: Plugin,
     socket: Socket,
-    cors: Cors,
+    cache: Cache,
     file: File,
+    cors: Cors,
 });
