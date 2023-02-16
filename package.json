@@ -2,7 +2,7 @@
     "private": false,
     "name": "@xeaone/server",
     "type": "module",
-    "version": "2.4.1",
+    "version": "2.5.0",
     "description": "[![CodeQL](https://github.com/xeaone/server/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/xeaone/server/actions/workflows/codeql-analysis.yml)\r![GitHub](https://img.shields.io/github/license/xeaone/server)",
     "main": "src/mod.ts",
     "module": "src/mod.ts",
