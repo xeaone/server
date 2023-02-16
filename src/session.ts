@@ -26,6 +26,9 @@ interface Options {
     vector?: number;
     iterations?: number;
     maxAge?: number;
+
+    domain?: string;
+
     secret?: string;
     signature?: string;
     validate?: Validate;
@@ -37,14 +40,20 @@ export default class Session extends Plugin {
     realm: string;
     expiration: number;
     parse: boolean;
+
     secure: boolean;
     httpOnly: boolean;
     sameSite: string;
+
     key: number;
     salt: number;
     vector: number;
     iterations: number;
+
     maxAge?: number;
+
+    #domain?: string;
+
     #secret?: string;
     #signature?: string;
     #validate?: Validate;
@@ -61,6 +70,8 @@ export default class Session extends Plugin {
         this.sameSite = options?.sameSite ?? 'strict';
         this.expiration = options?.expiration ?? EXPIRATION;
 
+        this.#domain = options?.domain;
+
         this.#secret = options?.secret;
         this.#signature = options?.signature;
         this.#validate = options?.validate ?? undefined;
@@ -71,14 +82,21 @@ export default class Session extends Plugin {
         this.iterations = options?.iterations ?? 10000;
     }
 
+    domain(domain: string) {
+        this.#domain = domain;
+        return this;
+    }
+
     secret(secret: string) {
         this.#secret = secret;
         return this;
     }
+
     validate(validate: Validate) {
         this.#validate = validate;
         return this;
     }
+
     signature(signature: string) {
         this.#signature = signature;
         return this;
@@ -261,6 +279,7 @@ export default class Session extends Plugin {
 
         if (this.secure) cookie += ';Secure';
         if (this.httpOnly) cookie += ';HttpOnly';
+        if (this.#domain) cookie += `;Domain=${this.#domain}`;
         if (this.sameSite) cookie += `;SameSite=${this.sameSite}`;
 
         if (this.maxAge) cookie += `;Max-Age=${this.maxAge}`;
