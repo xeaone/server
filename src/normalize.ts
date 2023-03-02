@@ -1,6 +1,14 @@
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
+/**
+ * ## Normalize URL
+ * Strips ending `index.html`, `.html`, `/` and replaces duplicate `//`
+ * options
+ * - redirect `www = false`
+ * - redirect `https = false`
+ */
+
 export default class Normalize extends Plugin {
     #www = false;
     #https = false;

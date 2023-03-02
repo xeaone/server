@@ -2,6 +2,7 @@
 import { serve as Server } from './deps.ts';
 
 import Forwarded from './forwarded.ts';
+import Defenders from './defenders.ts';
 import Normalize from './normalize.ts';
 import Payload from './payload.ts';
 import Context from './context.ts';
@@ -17,32 +18,26 @@ import * as Handle from './handle.ts';
 import * as Plugin from './plugin.ts';
 
 export {
-    Context,
-    Context as context,
-
-    Cors,
-    Cors as cors,
-
-    File,
-    File as file,
-
-    Cache,
-    Cache as cache,
-
     Handle,
     Handle as handle,
 
-    Handler,
-    Handler as handler,
-
     Forwarded,
     Forwarded as forwarded,
+
+    Defenders,
+    Defenders as defenders,
 
     Normalize,
     Normalize as normalize,
 
     Payload,
     Payload as payload,
+
+    Context,
+    Context as context,
+
+    Handler,
+    Handler as handler,
 
     Plugin,
     Plugin as plugin,
@@ -57,37 +52,62 @@ export {
     Session as session,
 
     Socket,
-    Socket as socket
+    Socket as socket,
+
+    Cache,
+    Cache as cache,
+
+    File,
+    File as file,
+
+    Cors,
+    Cors as cors,
 };
 
 export default Object.freeze({
-    Forwarded,
-    Normalize,
-    Payload,
-    Context,
-    Handler,
-    Session,
-    Server,
-    Router,
-    Handle,
-    Plugin,
-    Socket,
-    Cache,
-    File,
-    Cors,
 
+    Forwarded,
     forwarded: Forwarded,
+
+    Defenders,
+    defenders: Defenders,
+
+    Normalize,
     normalize: Normalize,
+
+    Payload,
     payload: Payload,
+
+    Context,
     context: Context,
+
+    Handler,
     handler: Handler,
+
+    Session,
     session: Session,
+
+    Server,
     server: Server,
+
+    Router,
     router: Router,
+
+    Handle,
     handle: Handle,
+
+    Plugin,
     plugin: Plugin,
+
+    Socket,
     socket: Socket,
+
+    Cache,
     cache: Cache,
+
+    File,
     file: File,
+
+    Cors,
     cors: Cors,
 });
