@@ -35,40 +35,24 @@ export default class Context {
         Object.defineProperty(this.tool, name, property);
     }
 
-    code(code?: Status): this | Status {
-        if (code) {
-            this.#code = code;
-            return this;
-        } else {
-            return this.#code;
-        }
+    code(code: Status): this {
+        this.#code = code;
+        return this;
     }
 
-    message(message?: string): this | string | undefined {
-        if (message) {
-            this.#message = message;
-            return this;
-        } else {
-            return this.#message;
-        }
+    message(message: string): this {
+        this.#message = message;
+        return this;
     }
 
-    head(head?: Record<string, string>): this | Record<string, string> {
-        if (head) {
-            Object.entries(head).forEach(([name, value]) => this.headers.append(name, value));
-            return this;
-        } else {
-            return Object.fromEntries(this.headers);
-        }
+    head(head: Record<string, string>): this {
+        Object.entries(head).forEach(([name, value]) => this.headers.append(name, value));
+        return this;
     }
 
-    body(body?: Body): this | Body {
-        if (body) {
-            this.#body = body;
-            return this;
-        } else {
-            return this.#body;
-        }
+    body(body: Body): this {
+        this.#body = body;
+        return this;
     }
 
     end(code?: Status, body?: Body): Response {
