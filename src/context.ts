@@ -2,12 +2,13 @@ import { media, Status, STATUS_TEXT } from './deps.ts';
 import Type from './type.ts';
 
 type Body = BodyInit | Record<string, any> | Array<any> | null | undefined;
+type Method = 'get' | 'head' | 'post' | 'put' | 'delete' | 'connect' | 'options' | 'trace' | 'patch';
 
 export default class Context {
     tool: Record<string, any> = {};
 
     url: URL;
-    method: string;
+    method: Method;
     headers: Headers;
     request: Request;
     redirect = Response.redirect;
@@ -20,7 +21,7 @@ export default class Context {
         this.request = request;
         this.headers = new Headers();
         this.url = new URL(request.url);
-        this.method = request.method.toLowerCase();
+        this.method = (request.method.toLowerCase() as Method);
     }
 
     get(name: string) {
@@ -34,7 +35,7 @@ export default class Context {
         Object.defineProperty(this.tool, name, property);
     }
 
-    code(code?: Status): this | Status | any {
+    code(code?: Status): this | Status {
         if (code) {
             this.#code = code;
             return this;
@@ -43,7 +44,7 @@ export default class Context {
         }
     }
 
-    message(message?: string): this | string | undefined | any {
+    message(message?: string): this | string | undefined {
         if (message) {
             this.#message = message;
             return this;
@@ -52,7 +53,7 @@ export default class Context {
         }
     }
 
-    head(head?: Record<string, string>): this | Record<string, string> | any {
+    head(head?: Record<string, string>): this | Record<string, string> {
         if (head) {
             Object.entries(head).forEach(([name, value]) => this.headers.append(name, value));
             return this;
@@ -61,7 +62,7 @@ export default class Context {
         }
     }
 
-    body(body?: Body): this | Body | any {
+    body(body?: Body): this | Body {
         if (body) {
             this.#body = body;
             return this;
