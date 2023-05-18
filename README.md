@@ -1,9 +1,11 @@
+[![deno module](https://shield.deno.dev/x/xserver)](https://deno.land/x/xserver)
+![deno compatibility](https://shield.deno.dev/deno/1.33.3)
 [![CodeQL](https://github.com/xeaone/server/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/xeaone/server/actions/workflows/codeql-analysis.yml)
 ![GitHub](https://img.shields.io/github/license/xeaone/server)
 
 # X-Server
 
-Deno server module.
+Deno server module with built in middleware.
 
 ## Use
 
@@ -25,7 +27,7 @@ router.post('/post', (context) => context.end(200, 'post'));
 handler.add(normalize);
 handler.add(router);
 
-await Server(request => handler.handle(request), { port: 8080 });
+await Server((request) => handler.handle(request), { port: 8080 });
 ```
 
 ### Server
@@ -44,7 +46,7 @@ const normalize = new Normalize();
 
 handler.add(normalize);
 
-await Server(request => handler.handle(request));
+await Server((request) => handler.handle(request));
 ```
 
 ### Normalize
@@ -104,6 +106,7 @@ file.get('/*', true); // get method any path serve files from the ./web folder
 ```
 
 ### Session
+
 Constructor Plugin that will provide session using Secure Session Cookies https://tools.ietf.org/html/rfc6896.
 
 ```ts
@@ -127,6 +130,7 @@ session.post('/sign-in', false); // post method specific path disable session pr
 ```
 
 ### Forwarded
+
 Constructor Plugin that will parse the `forwarded` header.
 This is good for getting client/remote IP address behind a proxy/loadbalancer.
 
@@ -150,13 +154,12 @@ handler.add(forwarded);
     };
 */
 handler.add(function (context) {
-    const { for: [ client ] } = context.tool.forwarded.data;
+    const { for: [client] } = context.tool.forwarded.data;
     return context.end(200, client);
 });
 
-await Server(request => handler.handle(request), { port: 8080 });
+await Server((request) => handler.handle(request), { port: 8080 });
 ```
-
 
 ### Socket
 

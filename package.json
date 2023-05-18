@@ -2,17 +2,15 @@
     "private": false,
     "name": "@xeaone/server",
     "type": "module",
-    "version": "2.6.0",
-    "description": "[![CodeQL](https://github.com/xeaone/server/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/xeaone/server/actions/workflows/codeql-analysis.yml)\r![GitHub](https://img.shields.io/github/license/xeaone/server)",
+    "version": "3.0.1",
+    "description": "Deno server module with built in middleware.",
     "main": "src/mod.ts",
     "module": "src/mod.ts",
     "directories": {
         "src": "src",
         "example": "examples"
     },
-    "scripts": {
-        "deploy": "deno run -A deploy.ts"
-    },
+    "scripts": {},
     "repository": {
         "type": "git",
         "url": "git+https://github.com/xeaone/server.git"

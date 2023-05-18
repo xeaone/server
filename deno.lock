@@ -63,6 +63,7 @@
     "https://deno.land/std@0.168.0/streams/write_all.ts": "7525aa90e34a2bb56d094403ad9c0e31e7db87a47cb556e6dc0404e6deca084c",
     "https://deno.land/std@0.168.0/streams/writer_from_stream_writer.ts": "eee7964dc30acc74a02fc52f98f3a4fd46d1382d7897859b21eeebbd0a754ec6",
     "https://deno.land/std@0.168.0/streams/zip_readable_streams.ts": "17d5e6625a60ae4268dfd1ddb9aefa3c7f048ed854d4c20d4c05b646dc0e006b",
+    "https://deno.land/std@0.188.0/semver/mod.ts": "200f50cf6872212667df532fb09f0b1a33d3427a5201f75fad30a0d0c6dbcce3",
     "https://deno.land/x/xtool@0.0.6/secret/mod.ts": "3cd740deec64d55d046c2459f77ba6f07d1bdaeb9d29c05f1ac8c235cf7d2727"
   }
 }
