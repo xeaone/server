@@ -8,6 +8,8 @@ import Plugin from './plugin.ts';
 */
 
 type Validate = (context: Context, data: any) => Promise<Response | void> | Response | void;
+type Forbidden = (context: Context) => Promise<Response | void> | Response | void;
+type Unauthorized = (context: Context) => Promise<Response | void> | Response | void;
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -31,7 +33,10 @@ interface Options {
 
     secret?: string;
     signature?: string;
+
     validate?: Validate;
+    forbidden?: Forbidden;
+    unauthorized?: Unauthorized;
 }
 
 export default class Session extends Plugin {
@@ -56,7 +61,10 @@ export default class Session extends Plugin {
 
     #secret?: string;
     #signature?: string;
+
     #validate?: Validate;
+    #forbidden?: Forbidden;
+    #unauthorized?: Unauthorized;
 
     constructor(options?: Options) {
         super();
@@ -70,16 +78,28 @@ export default class Session extends Plugin {
         this.sameSite = options?.sameSite ?? 'strict';
         this.expiration = options?.expiration ?? EXPIRATION;
 
-        this.#domain = options?.domain;
-
-        this.#secret = options?.secret;
-        this.#signature = options?.signature;
-        this.#validate = options?.validate ?? undefined;
-
         this.key = options?.key ?? 32;
         this.salt = options?.salt ?? 16;
         this.vector = options?.vector ?? 16;
         this.iterations = options?.iterations ?? 10000;
+
+        this.#domain = options?.domain;
+
+        this.#secret = options?.secret;
+        this.#signature = options?.signature;
+
+        this.#validate = options?.validate ?? undefined;
+
+        this.#forbidden = options?.forbidden ?? (() => new Response(
+            STATUS_TEXT[Status.Forbidden],
+            { status: Status.Forbidden }
+        ));
+
+        this.#unauthorized = options?.unauthorized ?? (() => new Response(
+            STATUS_TEXT[Status.Unauthorized],
+            { status: Status.Unauthorized, headers: { 'www-authenticate': `${this.scheme} realm="${this.realm}"` } }
+        ));
+
     }
 
     domain(domain: string) {
@@ -99,6 +119,16 @@ export default class Session extends Plugin {
 
     signature(signature: string) {
         this.#signature = signature;
+        return this;
+    }
+
+    forbidden(forbidden: Forbidden) {
+        this.#forbidden = forbidden;
+        return this;
+    }
+
+    unauthorized(unauthorized: Unauthorized) {
+        this.#unauthorized = unauthorized;
         return this;
     }
 
@@ -302,15 +332,6 @@ export default class Session extends Plugin {
         context.headers.append('set-cookie', cookie);
     }
 
-    forbidden() {
-        return new Response(STATUS_TEXT[Status.Forbidden], { status: Status.Forbidden });
-    }
-
-    unauthorized() {
-        const headers = { 'www-authenticate': `${this.scheme} realm="${this.realm}"` };
-        return new Response(STATUS_TEXT[Status.Unauthorized], { status: Status.Unauthorized, headers });
-    }
-
     cookie(context: Context) {
         const header = context.request.headers.get('cookie') || '';
         const cookies = header.split(/\s*;\s*/);
@@ -334,26 +355,26 @@ export default class Session extends Plugin {
     }
 
     async handle(context: Context) {
-        if (typeof this.#validate !== 'function') {
-            throw new Error('Session - validate required');
-        }
+        if (typeof this.#validate !== 'function') throw new Error('Session - validate required');
+        if (typeof this.#forbidden !== 'function') throw new Error('Session - forbidden required');
+        if (typeof this.#unauthorized !== 'function') throw new Error('Session - unauthorized required');
 
         const cookie = await this.cookie(context);
-        if (!cookie) return this.unauthorized();
+        if (!cookie) return this.#unauthorized(context);
 
         const unboxed = cookie.split('|');
-        if (unboxed.length !== 3) return this.unauthorized();
+        if (unboxed.length !== 3) return this.#unauthorized(context);
 
         const [encrypted, stamped, signed] = unboxed;
 
         const unsigned = await this.unsign(encrypted, stamped, signed);
-        if (!unsigned) return this.unauthorized();
+        if (!unsigned) return this.#unauthorized(context);
 
         const unstamped = await this.unstamp(stamped);
-        if (!unstamped) return this.unauthorized();
+        if (!unstamped) return this.#unauthorized(context);
 
         const decrypted = await this.decrypt(encrypted);
-        if (!decrypted) return this.unauthorized();
+        if (!decrypted) return this.#unauthorized(context);
 
         context.tool.session.data = decrypted;
         const validate = await this.#validate(context, decrypted);
