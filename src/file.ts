@@ -1,4 +1,4 @@
-import { extname, join, media, readableStreamFromReader } from './deps.ts';
+import { extname, join, media, Status, ByteSliceStream } from './deps.ts';
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
@@ -6,6 +6,35 @@ interface Options {
     spa?: boolean;
     path?: string;
 }
+
+// const rangeRegex = /bytes=(?<start>\d+)?-(?<end>\d+)?$/u;
+// const parseRangeHeader = function (rangeValue: string, fileSize: number) {
+//     if (!rangeValue) return null;
+
+//     const parsed = rangeValue.match(rangeRegex);
+
+//     if (!parsed || !parsed.groups) {
+//         // failed to parse range header
+//         return null;
+//     }
+
+//     const { start, end } = parsed.groups;
+//     if (start !== undefined) {
+//         if (end !== undefined) {
+//             return { start: +start, end: +end };
+//         } else {
+//             return { start: +start, end: fileSize - 1 };
+//         }
+//     } else {
+//         if (end !== undefined) {
+//             // example: `bytes=-100` means the last 100 bytes.
+//             return { start: fileSize - +end, end: fileSize - 1 };
+//         } else {
+//             // failed to parse range header
+//             return null;
+//         }
+//     }
+// };
 
 export default class File extends Plugin {
     #path = '';
@@ -41,25 +70,26 @@ export default class File extends Plugin {
             path = `${path}.html`;
         }
 
-        let file;
+        let stat;
 
         try {
-            file = await Deno.open(path, { read: true });
+            stat = await Deno.stat(path);
         } catch (error) {
-            if (error.name === 'NotFound') {
-                return context.end(404);
+            if (error instanceof Deno.errors.NotFound) {
+                return context.end(Status.NotFound);
             } else {
                 throw error;
             }
         }
 
-        if (!context.headers.has('content-type')) {
-            const contentType = media.contentType(extension) ?? media.contentType('txt');
-            context.headers.set('content-type', contentType);
-        }
+        const contentType = media.contentType(extension) ?? media.contentType('txt');
+        context.headers.set('content-type', contentType);
 
-        const readableStream = readableStreamFromReader(file);
-        return context.end(200, readableStream);
+        const contentLength = `${stat.size}`;
+        context.headers.set('content-length', contentLength);
+
+        const file = await Deno.open(path, { read: true });
+        return context.end(Status.OK, file.readable);
     }
 
     async handle(context: Context): Promise<Response> {
@@ -76,33 +106,34 @@ export default class File extends Plugin {
             path = `${path}.html`;
         }
 
-        let file;
+        let stat;
 
         try {
-            file = await Deno.open(path, { read: true });
+            stat = await Deno.stat(path);
         } catch (error) {
-            if (error.name === 'NotFound') {
+            if (error instanceof Deno.errors.NotFound) {
                 if (!path.endsWith('.html') && path.includes('.')) {
-                    return context.end(404);
+                    return context.end(Status.NotFound);
                 }
 
                 try {
                     path = join(path.slice(0, -5), 'index.html');
-                    file = await Deno.open(path, { read: true });
+                    stat = await Deno.stat(path);
                 } catch (error) {
-                    if (error.name === 'NotFound') {
+                    if (error instanceof Deno.errors.NotFound) {
                         if (this.#spa) {
                             try {
-                                file = await Deno.open(join(this.#path, 'index.html'), { read: true });
+                                path = join(this.#path, 'index.html');
+                                stat = await Deno.stat(path);
                             } catch (error) {
-                                if (error.name === 'NotFound') {
-                                    return context.end(404);
+                                if (error instanceof Deno.errors.NotFound) {
+                                    return context.end(Status.NotFound);
                                 } else {
                                     throw error;
                                 }
                             }
                         } else {
-                            return context.end(404);
+                            return context.end(Status.NotFound);
                         }
                     } else {
                         throw error;
@@ -113,12 +144,49 @@ export default class File extends Plugin {
             }
         }
 
-        if (!context.headers.has('content-type')) {
-            const contentType = media.contentType(extension) ?? media.contentType('txt');
-            context.headers.set('content-type', contentType);
-        }
+        // const range = context.request.headers.get('range');
+        // const parsed = range && stat.size > 0 ? parseRangeHeader(range, stat.size) : null;
 
-        const readableStream = readableStreamFromReader(file);
-        return context.end(200, readableStream);
+        // if (parsed) {
+        //     // Return 416 Range Not Satisfiable if invalid range header value
+        //     if (
+        //         parsed.end < 0 ||
+        //         parsed.end < parsed.start ||
+        //         stat.size <= parsed.start
+        //     ) {
+        //         context.headers.set('content-range', `bytes */${stat.size}`);
+        //         return context.end(Status.RequestedRangeNotSatisfiable, undefined);
+        //     }
+
+        //     // clamps the range header value
+        //     const start = Math.max(0, parsed.start);
+        //     const end = Math.min(parsed.end, stat.size - 1);
+
+        //     context.headers.set('accept-ranges', 'bytes');
+        //     context.headers.set('content-range', `bytes ${start}-${end}/${stat.size}`);
+
+        //     const contentLength = end - start + 1;
+        //     context.headers.set('content-length', `${contentLength}`);
+
+        //     const contentType = media.contentType(extension) ?? media.contentType('txt');
+        //     context.headers.set('content-type', contentType);
+
+        //     // Return 206 Partial Content
+        //     const file = await Deno.open(path);
+        //     await file.seek(start, Deno.SeekMode.Start);
+        //     const sliced = file.readable.pipeThrough(new ByteSliceStream(0, contentLength - 1));
+        //     return context.end(Status.PartialContent, sliced);
+        // }
+
+        // context.headers.set('accept-ranges', 'bytes');
+
+        const contentType = media.contentType(extension) ?? media.contentType('txt');
+        context.headers.set('content-type', contentType);
+
+        const contentLength = `${stat.size}`;
+        context.headers.set('content-length', contentLength);
+
+        const file = await Deno.open(path);
+        return context.end(Status.OK, file.readable);
     }
 }
