@@ -21,13 +21,13 @@ const normalize = new Normalize();
 
 normalize.any('/*', true);
 
-router.get('/*', (context) => context.end(200, 'get'));
+router.get('/*', (context) => context.ok('get'));
 router.post('/post', (context) => context.end(200, 'post'));
 
 handler.add(normalize);
 handler.add(router);
 
-await Server((request) => handler.handle(request), { port: 8080 });
+Server({ port: 8080 }, (request) => handler.handle(request));
 ```
 
 ### Server
@@ -46,7 +46,7 @@ const normalize = new Normalize();
 
 handler.add(normalize);
 
-await Server((request) => handler.handle(request));
+Server((request) => handler.handle(request));
 ```
 
 ### Normalize
@@ -158,7 +158,7 @@ handler.add(function (context) {
     return context.end(200, client);
 });
 
-await Server((request) => handler.handle(request), { port: 8080 });
+Server((request) => handler.handle(request), { port: 8080 });
 ```
 
 ### Socket
