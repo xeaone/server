@@ -1,5 +1,5 @@
 // deno-fmt-ignore-file
-// import { serve as Server } from './deps.ts';
+import { Status, STATUS_TEXT } from './deps.ts';
 
 import Forwarded from './forwarded.ts';
 import Defenders from './defenders.ts';
@@ -16,6 +16,9 @@ import File from './file.ts';
 
 import * as Handle from './handle.ts';
 import * as Plugin from './plugin.ts';
+
+const Codes = Status;
+const Messages = STATUS_TEXT;
 
 const Server = Deno.serve;
 
@@ -64,6 +67,12 @@ export {
 
     Cors,
     Cors as cors,
+
+    Codes,
+    Codes as codes,
+
+    Messages,
+    Messages as messages,
 };
 
 export default Object.freeze({
@@ -112,4 +121,10 @@ export default Object.freeze({
 
     Cors,
     cors: Cors,
+
+    Codes,
+    codes: Codes,
+
+    Messages,
+    messages: Messages,
 });
