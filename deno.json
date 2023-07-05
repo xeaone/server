@@ -1,11 +1,13 @@
 {
     "tasks": {
         "d": "deno run -A deploy.ts",
-        "e": "deno run -A examples/server.ts --watch"
+        "e": "deno run -A --watch examples/server.ts"
     },
     "fmt": {
         "files": {
-            "include": ["./"]
+            "include": [
+                "./"
+            ]
         },
         "options": {
             "useTabs": false,

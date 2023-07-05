@@ -1,5 +1,5 @@
 // deno-fmt-ignore-file
-import { serve as Server } from './deps.ts';
+// import { serve as Server } from './deps.ts';
 
 import Forwarded from './forwarded.ts';
 import Defenders from './defenders.ts';
@@ -16,6 +16,8 @@ import File from './file.ts';
 
 import * as Handle from './handle.ts';
 import * as Plugin from './plugin.ts';
+
+const Server = Deno.serve;
 
 export {
     Handle,

@@ -14,34 +14,6 @@ const validate = (context: Context) => {
     if (!sessions.has(id)) return context.end(401);
 };
 
-const routes = {
-    '/sign-up': (context: Context) => {
-        const { username, password } = context.tool.payload.data;
-        if (!username) return context.end(400, 'username required');
-        if (!password) return context.end(400, 'password required');
-        const id = `${username}${password}`;
-        users.set(id, { id, username, password });
-        return context.end(200, 'signed up');
-    },
-    '/sign-out': async (context: Context) => {
-        const { id } = context.tool.session.data;
-        sessions.delete(id);
-        await context.tool.session.destroy();
-        return context.end(200, 'signed out');
-    },
-    '/sign-in': async (context: Context) => {
-        const { username, password } = context.tool.payload.data;
-        if (!users.has(`${username}${password}`)) return context.end(400, 'credentials not valid');
-        const created = Date.now();
-        const expires = Date.now() + 3.6e+6;
-        const id = crypto.randomUUID();
-        const data = { id, expires, created };
-        await context.tool.session.create(data);
-        sessions.set(id, data);
-        return context.end(200, 'signed in');
-    },
-};
-
 const file = new File();
 const router = new Router();
 const payload = new Payload();
@@ -65,7 +37,37 @@ session.get('/*', false);
 session.post('/sign-up', false);
 session.post('/sign-in', false);
 
-router.post(routes);
+router.get('/error', () => {
+    throw new Error('error');
+});
+
+router.post('/sign-up', (context) => {
+    const { username, password } = context.tool.payload.data;
+    if (!username) return context.end(400, 'username required');
+    if (!password) return context.end(400, 'password required');
+    const id = `${username}${password}`;
+    users.set(id, { id, username, password });
+    return context.end(200, 'signed up');
+});
+
+router.post('/sign-out', async (context) => {
+    const { id } = context.tool.session.data;
+    sessions.delete(id);
+    await context.tool.session.destroy();
+    return context.end(200, 'signed out');
+});
+
+router.post('/sign-in', async (context) => {
+    const { username, password } = context.tool.payload.data;
+    if (!users.has(`${username}${password}`)) return context.end(400, 'credentials not valid');
+    const created = Date.now();
+    const expires = Date.now() + 3.6e+6;
+    const id = crypto.randomUUID();
+    const data = { id, expires, created };
+    await context.tool.session.create(data);
+    sessions.set(id, data);
+    return context.end(200, 'signed in');
+});
 
 handler.add(normalize);
 handler.add(payload);
@@ -73,6 +75,6 @@ handler.add(session);
 handler.add(router);
 handler.add(file);
 
-await Server((request: Request) => handler.handle(request), { port });
+Server({ port }, request => handler.handle(request));
 
 // console.log(`listening: ${port}`);
