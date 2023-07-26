@@ -12,8 +12,7 @@ Deno server module with built in middleware.
 https://deno.land/x/xserver/src/mod.ts
 
 ```ts
-import { Normalize, Router } from 'https://deno.land/x/xserver/src/mod.ts';
-import { Handler, Server } from 'https://deno.land/x/xserver/src/mod.ts';
+import { Handler, Normalize, Router, Server } from 'https://deno.land/x/xserver/src/mod.ts';
 
 const router = new Router();
 const handler = new Handler();
@@ -21,13 +20,13 @@ const normalize = new Normalize();
 
 normalize.any('/*', true);
 
-router.get('/*', (context) => context.ok('get'));
-router.post('/post', (context) => context.end(200, 'post'));
+router.get('/*', (context) => context.html`<h1>Hello World</h1>`);
+router.post('/*', (context) => context.ok({ message: 'posted' }));
 
 handler.add(normalize);
 handler.add(router);
 
-Server({ port: 8080 }, (request) => handler.handle(request));
+Server((request) => handler.handle(request));
 ```
 
 ### Server

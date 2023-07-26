@@ -95,7 +95,7 @@ export default class Context {
         return this.tool[name];
     }
 
-    set(name: string, value: any) {
+    set(name: string, value: unknown) {
         if (name in this.tool) return;
         const enumerable = true;
         const property = { enumerable, value };
@@ -122,7 +122,8 @@ export default class Context {
         return this;
     }
 
-    end(code?: Status, body?: Body): Response {
+    end(code?: Status, body?: Body, head?: Record<string, string>): Response {
+
         this.#code = code ?? this.#code;
         this.#message = this.#message ?? STATUS_TEXT[this.#code as Status] ?? '';
         this.#body = body ?? this.#body ?? this.#message ?? '';
@@ -137,7 +138,35 @@ export default class Context {
             }
         }
 
+        if (head) {
+            Object.entries(head).forEach(([name, value]) => this.headers.append(name, value));
+        }
+
         return new Response(this.#body as BodyInit, { status: this.#code, statusText: this.#message, headers: this.headers });
+    }
+
+    /**
+     * @description A template tag for returning an html Response.
+     * @param strings
+     * @param variables
+     * @returns Response
+     */
+    html(strings: TemplateStringsArray, ...variables: unknown[]) {
+        let body = '';
+
+        const length = strings.length;
+        for (let index = 0; index < length; index++) {
+            body += strings[index] ?? '';
+            body += variables[index] ?? '';
+        }
+
+        this.headers.set('content-type', media.contentType('html'));
+
+        this.#code = this.#code ?? 200;
+        this.#message = this.#message ?? STATUS_TEXT[this.#code as Status] ?? '';
+        this.#body = body ?? '';
+
+        return new Response(this.#body, { status: this.#code, statusText: this.#message, headers: this.headers });
     }
 
 }
