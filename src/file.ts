@@ -1,4 +1,4 @@
-import { extname, join, media, Status, ByteSliceStream } from './deps.ts';
+import { extname, join, media, ByteSliceStream } from './deps.ts';
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
@@ -7,34 +7,34 @@ interface Options {
     path?: string;
 }
 
-// const rangeRegex = /bytes=(?<start>\d+)?-(?<end>\d+)?$/u;
-// const parseRangeHeader = function (rangeValue: string, fileSize: number) {
-//     if (!rangeValue) return null;
+const rangeRegex = /bytes=(?<start>\d+)?-(?<end>\d+)?$/u;
+const parseRangeHeader = function (rangeValue: string, fileSize: number) {
+    if (!rangeValue) return null;
 
-//     const parsed = rangeValue.match(rangeRegex);
+    const parsed = rangeValue.match(rangeRegex);
 
-//     if (!parsed || !parsed.groups) {
-//         // failed to parse range header
-//         return null;
-//     }
+    if (!parsed || !parsed.groups) {
+        // failed to parse range header
+        return null;
+    }
 
-//     const { start, end } = parsed.groups;
-//     if (start !== undefined) {
-//         if (end !== undefined) {
-//             return { start: +start, end: +end };
-//         } else {
-//             return { start: +start, end: fileSize - 1 };
-//         }
-//     } else {
-//         if (end !== undefined) {
-//             // example: `bytes=-100` means the last 100 bytes.
-//             return { start: fileSize - +end, end: fileSize - 1 };
-//         } else {
-//             // failed to parse range header
-//             return null;
-//         }
-//     }
-// };
+    const { start, end } = parsed.groups;
+    if (start !== undefined) {
+        if (end !== undefined) {
+            return { start: +start, end: +end };
+        } else {
+            return { start: +start, end: fileSize - 1 };
+        }
+    } else {
+        if (end !== undefined) {
+            // example: `bytes=-100` means the last 100 bytes.
+            return { start: fileSize - +end, end: fileSize - 1 };
+        } else {
+            // failed to parse range header
+            return null;
+        }
+    }
+};
 
 export default class File extends Plugin {
     #path = '';
@@ -54,6 +54,45 @@ export default class File extends Plugin {
     path(data: string): this {
         this.#path = data;
         return this;
+    }
+
+    async #send(context: Context, path: string, extension: string, stat: Deno.FileInfo) {
+        const range = context.request.headers.get('range');
+        const parsed = range && stat.size > 0 ? parseRangeHeader(range, stat.size) : null;
+        const contentType = media.contentType(extension) ?? media.contentType('txt');
+
+        if (!parsed) {
+            context.headers.set('content-type', contentType);
+            context.headers.set('content-length', `${stat.size}`);
+            const file = await Deno.open(path);
+            return context.ok(file.readable);
+        }
+
+        // return 416 Range Not Satisfiable if invalid range header value
+        if (
+            parsed.end < 0 ||
+            parsed.end < parsed.start ||
+            stat.size <= parsed.start
+        ) {
+            context.headers.set('content-range', `bytes */${stat.size}`);
+            return context.requestedRangeNotSatisfiable();
+        }
+
+        // clamps the range header value
+        const start = Math.max(0, parsed.start);
+        const end = Math.min(parsed.end, stat.size - 1);
+        const contentLength = end - start + 1;
+
+        context.headers.set('accept-ranges', 'bytes');
+        context.headers.set('content-range', `bytes ${start}-${end}/${stat.size}`);
+        context.headers.set('content-length', `${contentLength}`);
+        context.headers.set('content-type', contentType);
+
+        // return 206 Partial Content
+        const file = await Deno.open(path);
+        await file.seek(start, Deno.SeekMode.Start);
+        const sliced = file.readable.pipeThrough(new ByteSliceStream(0, contentLength - 1));
+        return context.partialContent(sliced);
     }
 
     async direct(context: Context, path: string): Promise<Response> {
@@ -76,20 +115,13 @@ export default class File extends Plugin {
             stat = await Deno.stat(path);
         } catch (error) {
             if (error instanceof Deno.errors.NotFound) {
-                return context.end(Status.NotFound);
+                return context.notFound();
             } else {
                 throw error;
             }
         }
 
-        const contentType = media.contentType(extension) ?? media.contentType('txt');
-        context.headers.set('content-type', contentType);
-
-        const contentLength = `${stat.size}`;
-        context.headers.set('content-length', contentLength);
-
-        const file = await Deno.open(path, { read: true });
-        return context.end(Status.OK, file.readable);
+        return this.#send(context, path, extension, stat);
     }
 
     async handle(context: Context): Promise<Response> {
@@ -113,7 +145,7 @@ export default class File extends Plugin {
         } catch (error) {
             if (error instanceof Deno.errors.NotFound) {
                 if (!path.endsWith('.html') && path.includes('.')) {
-                    return context.end(Status.NotFound);
+                    return context.notFound();
                 }
 
                 try {
@@ -127,13 +159,13 @@ export default class File extends Plugin {
                                 stat = await Deno.stat(path);
                             } catch (error) {
                                 if (error instanceof Deno.errors.NotFound) {
-                                    return context.end(Status.NotFound);
+                                    return context.notFound();
                                 } else {
                                     throw error;
                                 }
                             }
                         } else {
-                            return context.end(Status.NotFound);
+                            return context.notFound();
                         }
                     } else {
                         throw error;
@@ -144,49 +176,7 @@ export default class File extends Plugin {
             }
         }
 
-        // const range = context.request.headers.get('range');
-        // const parsed = range && stat.size > 0 ? parseRangeHeader(range, stat.size) : null;
-
-        // if (parsed) {
-        //     // Return 416 Range Not Satisfiable if invalid range header value
-        //     if (
-        //         parsed.end < 0 ||
-        //         parsed.end < parsed.start ||
-        //         stat.size <= parsed.start
-        //     ) {
-        //         context.headers.set('content-range', `bytes */${stat.size}`);
-        //         return context.end(Status.RequestedRangeNotSatisfiable, undefined);
-        //     }
-
-        //     // clamps the range header value
-        //     const start = Math.max(0, parsed.start);
-        //     const end = Math.min(parsed.end, stat.size - 1);
-
-        //     context.headers.set('accept-ranges', 'bytes');
-        //     context.headers.set('content-range', `bytes ${start}-${end}/${stat.size}`);
-
-        //     const contentLength = end - start + 1;
-        //     context.headers.set('content-length', `${contentLength}`);
-
-        //     const contentType = media.contentType(extension) ?? media.contentType('txt');
-        //     context.headers.set('content-type', contentType);
-
-        //     // Return 206 Partial Content
-        //     const file = await Deno.open(path);
-        //     await file.seek(start, Deno.SeekMode.Start);
-        //     const sliced = file.readable.pipeThrough(new ByteSliceStream(0, contentLength - 1));
-        //     return context.end(Status.PartialContent, sliced);
-        // }
-
-        // context.headers.set('accept-ranges', 'bytes');
-
-        const contentType = media.contentType(extension) ?? media.contentType('txt');
-        context.headers.set('content-type', contentType);
-
-        const contentLength = `${stat.size}`;
-        context.headers.set('content-length', contentLength);
-
-        const file = await Deno.open(path);
-        return context.end(Status.OK, file.readable);
+        return this.#send(context, path, extension, stat);
     }
+
 }
