@@ -36,6 +36,10 @@ const parseRangeHeader = function (rangeValue: string, fileSize: number) {
     }
 };
 
+// const parseAcceptEncodingHeaders = function (data: string | null) {
+//     return data?.split(/\s*,\s*/) ?? [];
+// };
+
 export default class File extends Plugin {
     #path = '';
     #spa = false;
@@ -59,12 +63,25 @@ export default class File extends Plugin {
     async #send(context: Context, path: string, extension: string, stat: Deno.FileInfo) {
         const range = context.request.headers.get('range');
         const parsed = range && stat.size > 0 ? parseRangeHeader(range, stat.size) : null;
-        const contentType = media.contentType(extension) ?? media.contentType('txt');
+        const contentType = media.contentType(extension) ?? media.contentType('application/octet-stream');
 
         if (!parsed) {
             context.headers.set('content-type', contentType);
             context.headers.set('content-length', `${stat.size}`);
-            const file = await Deno.open(path);
+            const file = await Deno.open(path, { read: true });
+
+            // const responseEncodings = ['gzip', 'deflate'];
+            // const requestEncodings = parseAcceptEncodingHeaders(context.request.headers.get('accept-encoding'));
+            // const responseEncoding = requestEncodings.find(requestEncoding => responseEncodings.includes(requestEncoding));
+
+            // if (responseEncoding) {
+            //     context.headers.set('content-encoding', responseEncoding);
+            //     const compression = new CompressionStream(responseEncoding);
+            //     return context.ok(file.readable.pipeThrough(compression));
+            // } else {
+            // return context.ok(file.readable);
+            // }
+
             return context.ok(file.readable);
         }
 
@@ -85,14 +102,15 @@ export default class File extends Plugin {
 
         context.headers.set('accept-ranges', 'bytes');
         context.headers.set('content-range', `bytes ${start}-${end}/${stat.size}`);
-        context.headers.set('content-length', `${contentLength}`);
         context.headers.set('content-type', contentType);
+        context.headers.set('content-length', `${contentLength}`);
 
         // return 206 Partial Content
-        const file = await Deno.open(path);
+        const file = await Deno.open(path, { read: true });
         await file.seek(start, Deno.SeekMode.Start);
-        const sliced = file.readable.pipeThrough(new ByteSliceStream(0, contentLength - 1));
-        return context.partialContent(sliced);
+        const body = file.readable.pipeThrough(new ByteSliceStream(0, contentLength - 1));
+
+        return context.partialContent(body);
     }
 
     async direct(context: Context, path: string): Promise<Response> {
