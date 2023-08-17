@@ -113,7 +113,7 @@ export default class Context {
     }
 
     head(head: Record<string, string>): this {
-        Object.entries(head).forEach(([name, value]) => this.headers.append(name, value));
+        Object.entries(head).forEach(([name, value]) => this.headers.set(name, value));
         return this;
     }
 
