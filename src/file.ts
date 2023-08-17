@@ -1,4 +1,4 @@
-import { extname, join, media, ByteSliceStream } from './deps.ts';
+import { extname, join, media, ByteSliceStream, calculate, ifNoneMatch } from './deps.ts';
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
@@ -64,6 +64,28 @@ export default class File extends Plugin {
         const range = context.request.headers.get('range');
         const parsed = range && stat.size > 0 ? parseRangeHeader(range, stat.size) : null;
         const contentType = media.contentType(extension) ?? media.contentType('application/octet-stream');
+
+        const ifNoneMatchValue = context.request.headers.get('if-none-match');
+        const ifModifiedSinceValue = context.request.headers.get('if-modified-since');
+
+        // date header if access timestamp is available
+        if (stat.atime) context.headers.set('date', stat.atime.toUTCString());
+
+        // last modified header if last modification timestamp is available
+        if (stat.mtime) context.headers.set('last-modified', stat.mtime.toUTCString());
+
+        if (
+            !ifNoneMatchValue && ifModifiedSinceValue && stat.mtime &&
+            stat.mtime.getTime() < new Date(ifModifiedSinceValue).getTime() + 1000
+        ) {
+            return context.notModified();
+        }
+
+        const etag = stat.mtime ? await calculate(stat) : undefined;
+        if (etag) {
+            context.headers.set('etag', etag);
+            if (!ifNoneMatch(ifNoneMatchValue, etag)) return context.notModified();
+        }
 
         if (!parsed) {
             context.headers.set('content-type', contentType);
