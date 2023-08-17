@@ -142,6 +142,16 @@ export default class Context {
             Object.entries(head).forEach(([name, value]) => this.headers.append(name, value));
         }
 
+        // https://fetch.spec.whatwg.org/#statuses
+        // status codes that require null budy
+        if (
+            this.#code === 101 ||
+            this.#code === 103 ||
+            this.#code === 204 ||
+            this.#code === 205 ||
+            this.#code === 304
+        ) this.#body = null;
+
         return new Response(this.#body as BodyInit, { status: this.#code, statusText: this.#message, headers: this.headers });
     }
 
