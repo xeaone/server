@@ -11,11 +11,14 @@ export default class Context {
     method: Method;
     headers: Headers;
     request: Request;
-    redirect = Response.redirect;
 
     #code = 200;
     #body: Body;
     #message?: string;
+
+    codes = Status;
+
+    redirect = Response.redirect;
 
     continue = this.end.bind(this, 100);
     switchingProtocols = this.end.bind(this, 101);
@@ -139,7 +142,7 @@ export default class Context {
         }
 
         if (head) {
-            Object.entries(head).forEach(([name, value]) => this.headers.append(name, value));
+            Object.entries(head).forEach(([name, value]) => this.headers.set(name, value));
         }
 
         // https://fetch.spec.whatwg.org/#statuses
@@ -161,7 +164,7 @@ export default class Context {
      * @param variables
      * @returns Response
      */
-    html(strings: TemplateStringsArray, ...variables: unknown[]) {
+    html(strings: TemplateStringsArray, ...variables: unknown[]): Response {
         let body = '';
 
         const length = strings.length;
@@ -170,13 +173,7 @@ export default class Context {
             body += variables[index] ?? '';
         }
 
-        this.headers.set('content-type', media.contentType('html'));
-
-        this.#code = this.#code ?? 200;
-        this.#message = this.#message ?? STATUS_TEXT[this.#code as Status] ?? '';
-        this.#body = body ?? '';
-
-        return new Response(this.#body, { status: this.#code, statusText: this.#message, headers: this.headers });
+        return this.end(this.#code ?? 200, body, { 'content-type': media.contentType('html') });
     }
 
 }
