@@ -39,7 +39,7 @@ interface Options {
     unauthorized?: Unauthorized;
 }
 
-export default class Session extends Plugin {
+export default class Session extends Plugin<boolean> {
     scheme = 'scheme';
     name: string;
     realm: string;
@@ -354,7 +354,9 @@ export default class Session extends Plugin {
         });
     }
 
-    async handle(context: Context) {
+    async handle(context: Context, use: boolean): Promise<Response | void> {
+        if (use === false) return;
+
         if (typeof this.#validate !== 'function') throw new Error('Session - validate required');
         if (typeof this.#forbidden !== 'function') throw new Error('Session - forbidden required');
         if (typeof this.#unauthorized !== 'function') throw new Error('Session - unauthorized required');
@@ -381,6 +383,7 @@ export default class Session extends Plugin {
 
         return validate;
     }
+
 }
 
 // const secret = 'secret';

@@ -40,7 +40,7 @@ const parseRangeHeader = function (rangeValue: string, fileSize: number) {
 //     return data?.split(/\s*,\s*/) ?? [];
 // };
 
-export default class File extends Plugin {
+export default class File extends Plugin<boolean> {
     #path = '';
     #spa = false;
 
@@ -164,12 +164,22 @@ export default class File extends Plugin {
         return this.#send(context, path, extension, stat);
     }
 
-    async handle(context: Context): Promise<Response> {
-        if (!this.#path) throw new Error('File - path required');
+    async handle(context: Context, use: boolean): Promise<Response | void> {
+        if (use === false) return;
+
+        const options = {
+            spa: this.#spa,
+            path: this.#path,
+        };
+        // options = options ?? {}
+        // options.spa = this.#spa;
+        // options.path = this.#path;
+
+        if (!options.path) throw new Error('File - path required');
 
         let path = decodeURIComponent(context.url.pathname);
         path = path.endsWith('/') ? `${path}index.html` : path;
-        path = join(this.#path, path);
+        path = join(options.path, path);
 
         let extension = extname(path).slice(1);
 
@@ -193,9 +203,9 @@ export default class File extends Plugin {
                     stat = await Deno.stat(path);
                 } catch (error) {
                     if (error instanceof Deno.errors.NotFound) {
-                        if (this.#spa) {
+                        if (options.spa) {
                             try {
-                                path = join(this.#path, 'index.html');
+                                path = join(options.path, 'index.html');
                                 stat = await Deno.stat(path);
                             } catch (error) {
                                 if (error instanceof Deno.errors.NotFound) {

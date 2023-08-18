@@ -1,18 +1,16 @@
 import Context from './context.ts';
-import Handle from './handle.ts';
 
-type Value = null | undefined | string | boolean | number | Handle;
 type Method = 'get' | 'head' | 'post' | 'put' | 'delete' | 'connect' | 'options' | 'trace' | 'patch' | 'any';
 
-export default abstract class Plugin {
-    abstract handle(context: Context, value?: Value): Promise<Response | void> | Response | void;
+export default abstract class Plugin<V = any> {
+    abstract handle(context: Context, value?: V): Promise<Response | void> | Response | void;
 
-    #map(method: Method, path: string, value?: Value): this {
+    #map(method: Method, path: string, value?: V): this {
         this.data[method].set(path, value);
         return this;
     }
 
-    readonly data: Record<string, Map<string, Value>> = {
+    readonly data: Record<string, Map<string, any>> = {
         get: new Map(),
         head: new Map(),
         post: new Map(),
@@ -35,4 +33,5 @@ export default abstract class Plugin {
     readonly trace = this.#map.bind(this, 'trace');
     readonly patch = this.#map.bind(this, 'patch');
     readonly any = this.#map.bind(this, 'any');
+
 }

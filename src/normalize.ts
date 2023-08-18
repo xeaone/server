@@ -10,6 +10,7 @@ import Plugin from './plugin.ts';
  */
 
 export default class Normalize extends Plugin {
+
     #www = false;
     #https = false;
 
@@ -71,4 +72,5 @@ export default class Normalize extends Plugin {
             return Response.redirect(url.href, 301);
         }
     }
+    
 }
