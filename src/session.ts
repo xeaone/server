@@ -7,32 +7,38 @@ import Plugin from './plugin.ts';
     Secure Session Cookies: https://tools.ietf.org/html/rfc6896
 */
 
-type Validate = (context: Context, data: any) => Promise<Response | void> | Response | void;
+type SameSite = 'Strict' | 'Lax' | 'None';
+
 type Forbidden = (context: Context) => Promise<Response | void> | Response | void;
 type Unauthorized = (context: Context) => Promise<Response | void> | Response | void;
+type Validate = (context: Context, data: any) => Promise<Response | void> | Response | void;
+
+const second = 1000;
+const minute = second * 60;
+const hour = minute * 60;
+const day = hour * 24;
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
-const EXPIRATION = 1000 * 60 * 60 * 24; // 24 hours
 
 interface Options {
     name?: string;
     realm?: string;
-    expiration?: number;
     parse?: boolean;
+
     secure?: boolean;
     httpOnly?: boolean;
-    sameSite?: string;
+    sameSite?: SameSite;
+
     key?: number;
     salt?: number;
     vector?: number;
     iterations?: number;
-    maxAge?: number;
 
     domain?: string;
-
     secret?: string;
     signature?: string;
+    expiration?: number;
 
     validate?: Validate;
     forbidden?: Forbidden;
@@ -43,40 +49,36 @@ export default class Session extends Plugin<boolean> {
     scheme = 'scheme';
     name: string;
     realm: string;
-    expiration: number;
     parse: boolean;
 
-    secure: boolean;
-    httpOnly: boolean;
-    sameSite: string;
+    #secure: boolean;
+    #httpOnly: boolean;
+    #sameSite: SameSite;
 
     key: number;
     salt: number;
     vector: number;
     iterations: number;
 
-    maxAge?: number;
-
     #domain?: string;
-
     #secret?: string;
     #signature?: string;
+    #expiration: number;
 
     #validate?: Validate;
-    #forbidden?: Forbidden;
-    #unauthorized?: Unauthorized;
+    #forbidden: Forbidden;
+    #unauthorized: Unauthorized;
 
     constructor(options?: Options) {
         super();
 
-        this.maxAge = options?.maxAge;
         this.name = options?.name ?? 'session';
         this.realm = options?.realm ?? 'secure';
         this.parse = options?.parse ?? true;
-        this.secure = options?.secure ?? true;
-        this.httpOnly = options?.httpOnly ?? true;
-        this.sameSite = options?.sameSite ?? 'strict';
-        this.expiration = options?.expiration ?? EXPIRATION;
+
+        this.#secure = options?.secure ?? true;
+        this.#httpOnly = options?.httpOnly ?? true;
+        this.#sameSite = options?.sameSite ?? 'Strict';
 
         this.key = options?.key ?? 32;
         this.salt = options?.salt ?? 16;
@@ -84,11 +86,11 @@ export default class Session extends Plugin<boolean> {
         this.iterations = options?.iterations ?? 10000;
 
         this.#domain = options?.domain;
-
         this.#secret = options?.secret;
         this.#signature = options?.signature;
+        this.#expiration = options?.expiration ?? day;
 
-        this.#validate = options?.validate ?? undefined;
+        this.#validate = options?.validate;
 
         this.#forbidden = options?.forbidden ?? (() => new Response(
             STATUS_TEXT[Status.Forbidden],
@@ -102,32 +104,94 @@ export default class Session extends Plugin<boolean> {
 
     }
 
-    domain(domain: string) {
+    /**
+     * The set-cookie Secure header.
+     * @param {boolean} secure
+     * @returns {Session}
+     */
+    secure(secure: boolean): Session {
+        if (typeof secure !== 'boolean') throw new Error('secure not valid');
+        this.#secure = secure;
+        return this;
+    }
+
+    /**
+     * The set-cookie HttpOnly header.
+     * @param {boolean} httpOnly
+     * @returns {Session}
+     */
+    httpOnly(httpOnly: boolean): Session {
+        if (typeof httpOnly !== 'boolean') throw new Error('httpOnly not valid');
+        this.#httpOnly = httpOnly;
+        return this;
+    }
+
+    /**
+     * The set-cookie SameSite header.
+     * @param {SameSite} sameSite
+     * @returns {Session}
+     */
+    sameSite(sameSite: SameSite): Session {
+        if (!sameSite || typeof sameSite !== 'string') throw new Error('sameSite not valid');
+        this.#sameSite = sameSite;
+        return this;
+    }
+
+    /**
+     * The set-cookie Domain header.
+     * @param {string} domain
+     * @returns {Session}
+     */
+    domain(domain: string): Session {
+        if (!domain || typeof domain !== 'string') throw new Error('domain not valid');
         this.#domain = domain;
         return this;
     }
 
-    secret(secret: string) {
+    /**
+     * The number of milliseconds the session/cookie is valid default is 1 day or 24 hours.
+     * @param {number} expiration
+     * @returns {Session}
+     */
+    expiration(expiration: number): Session {
+        if (typeof expiration !== 'number') throw new Error('expiration not valid');
+        this.#expiration = expiration;
+        return this;
+    }
+
+    /**
+     * The secret to use to encrypt/decrrypt the cookies.
+     * @param {string} secret
+     * @returns {Session}
+     */
+    secret(secret: string): Session {
+        if (!secret || typeof secret !== 'string') throw new Error('secret not valid');
         this.#secret = secret;
         return this;
     }
 
-    validate(validate: Validate) {
-        this.#validate = validate;
-        return this;
-    }
-
-    signature(signature: string) {
+    /**
+     * The signature to use to sign/unsign the cookies.
+     * @param {string} signature
+     * @returns {Session}
+     */
+    signature(signature: string): Session {
+        if (!signature || typeof signature !== 'string') throw new Error('signature not valid');
         this.#signature = signature;
         return this;
     }
 
-    forbidden(forbidden: Forbidden) {
+    validate(validate: Validate): Session {
+        this.#validate = validate;
+        return this;
+    }
+
+    forbidden(forbidden: Forbidden): Session {
         this.#forbidden = forbidden;
         return this;
     }
 
-    unauthorized(unauthorized: Unauthorized) {
+    unauthorized(unauthorized: Unauthorized): Session {
         this.#unauthorized = unauthorized;
         return this;
     }
@@ -280,7 +344,7 @@ export default class Session extends Plugin<boolean> {
 
     stamp(time: number) {
         if (!time) throw new Error('Session - time required');
-        const expiration = time + this.expiration;
+        const expiration = time + this.#expiration;
         return base64url.encode(`${expiration}`);
     }
 
@@ -307,13 +371,13 @@ export default class Session extends Plugin<boolean> {
 
         let cookie = `${this.name}=${encrypted}|${stamped}|${signed}`;
 
-        if (this.secure) cookie += ';Secure';
-        if (this.httpOnly) cookie += ';HttpOnly';
+        if (this.#secure) cookie += ';Secure';
+        if (this.#httpOnly) cookie += ';HttpOnly';
         if (this.#domain) cookie += `;Domain=${this.#domain}`;
-        if (this.sameSite) cookie += `;SameSite=${this.sameSite}`;
+        if (this.#sameSite) cookie += `;SameSite=${this.#sameSite}`;
 
-        if (this.maxAge) cookie += `;Max-Age=${this.maxAge}`;
-        else cookie += `;Expires=${new Date(time + this.expiration).toUTCString()}`;
+        cookie += `;Max-Age=${this.#expiration/1000}`;
+        // cookie += `;Expires=${new Date(time + this.#expiration).toUTCString()}`;
 
         if (encoder.encode(cookie).length > 4090) throw new Error('Session - cookie size invalid');
 
@@ -323,9 +387,9 @@ export default class Session extends Plugin<boolean> {
     destroy(context: Context) {
         let cookie = '';
 
-        if (this.secure) cookie += ';Secure';
-        if (this.httpOnly) cookie += ';HttpOnly';
-        if (this.sameSite) cookie += `;SameSite=${this.sameSite}`;
+        if (this.#secure) cookie += ';Secure';
+        if (this.#httpOnly) cookie += ';HttpOnly';
+        if (this.#sameSite) cookie += `;SameSite=${this.#sameSite}`;
 
         cookie = `${this.name}=${cookie};Max-Age=0`;
 
