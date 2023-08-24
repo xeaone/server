@@ -1,9 +1,11 @@
+import { STATUS_TEXT, Status } from './deps.ts';
 import Context from './context.ts';
 import Handle from './handle.ts';
 import Plugin from './plugin.ts';
 import Type from './type.ts';
 
 export default class Handler {
+
     #plugins: Set<Handle | Plugin> = new Set();
 
     add(plugin: Handle | Plugin) {
@@ -11,79 +13,85 @@ export default class Handler {
     }
 
     async handle(request: Request) {
-        const context = new Context(request);
-        const iterator = this.#plugins.values();
+        try {
+            const context = new Context(request);
+            const iterator = this.#plugins.values();
 
-        const method = context.request.method.toLowerCase();
-        const pathname = new URL(context.request.url).pathname;
+            const method = context.request.method.toLowerCase();
+            const pathname = new URL(context.request.url).pathname;
 
-        let result = iterator.next();
+            let result = iterator.next();
 
-        main:
-        while (!result.done) {
-            const plugin = result.value as any;
-            const type = Type(plugin);
+            main:
+            while (!result.done) {
+                const plugin = result.value as any;
+                const type = Type(plugin);
 
-            if (type === 'object') {
+                if (type === 'object') {
 
-                if (typeof plugin.setup === 'function') {
-                    await plugin.setup(context);
-                }
-
-                if (typeof plugin.handle === 'function') {
-                    const paths = plugin.data[method];
-
-                    const exact = paths.get(pathname) ?? plugin.data.any.get(pathname);
-                    if (exact) {
-                        const response = await plugin.handle(context, exact);
-                        if (response instanceof Response) return response;
+                    if (typeof plugin.setup === 'function') {
+                        await plugin.setup(context);
                     }
 
-                    if (exact !== undefined) {
-                        result = iterator.next();
-                        continue main;
-                    }
+                    if (typeof plugin.handle === 'function') {
+                        const paths = plugin.data[method];
 
-                    let path = '';
-                    const parts = pathname.replace(/\/[^./]+\.[^./]+$|^\/+|\/+$/g, '').split('/');
-                    for (const part of parts) {
-                        path += part ? `/${part}` : part;
-
-                        const dynamic = paths.get(`${path}/*`) ?? plugin.data.any.get(`${path}/*`);
-
-                        if (dynamic) {
-                            const response = await plugin.handle(context, dynamic);
+                        const exact = paths.get(pathname) ?? plugin.data.any.get(pathname);
+                        if (exact) {
+                            const response = await plugin.handle(context, exact);
                             if (response instanceof Response) return response;
                         }
 
-                        if (dynamic !== undefined) {
+                        if (exact !== undefined) {
+                            result = iterator.next();
+                            continue main;
+                        }
+
+                        let path = '';
+                        const parts = pathname.replace(/\/[^./]+\.[^./]+$|^\/+|\/+$/g, '').split('/');
+                        for (const part of parts) {
+                            path += part ? `/${part}` : part;
+
+                            const dynamic = paths.get(`${path}/*`) ?? plugin.data.any.get(`${path}/*`);
+
+                            if (dynamic) {
+                                const response = await plugin.handle(context, dynamic);
+                                if (response instanceof Response) return response;
+                            }
+
+                            if (dynamic !== undefined) {
+                                result = iterator.next();
+                                continue main;
+                            }
+                        }
+
+                        const any = paths.get('/*') ?? paths.get('*') ?? plugin.data.any.get('/*') ?? plugin.data.any.get('*');
+
+                        if (any) {
+                            const response = await plugin.handle(context, any);
+                            if (response instanceof Response) return response;
+                        }
+
+                        if (any !== undefined) {
                             result = iterator.next();
                             continue main;
                         }
                     }
-
-                    const any = paths.get('/*') ?? paths.get('*') ?? plugin.data.any.get('/*') ?? plugin.data.any.get('*');
-
-                    if (any) {
-                        const response = await plugin.handle(context, any);
-                        if (response instanceof Response) return response;
-                    }
-
-                    if (any !== undefined) {
-                        result = iterator.next();
-                        continue main;
-                    }
+                } else if (type === 'function' || type === 'asyncfunction') {
+                    const response = await plugin(context);
+                    if (response instanceof Response) return response;
+                } else {
+                    throw new Error('Handler - not valid requires function or object');
                 }
-            } else if (type === 'function' || type === 'asyncfunction') {
-                const response = await plugin(context);
-                if (response instanceof Response) return response;
-            } else {
-                throw new Error('Handler - not valid requires function or object');
+
+                result = iterator.next();
             }
 
-            result = iterator.next();
+            return new Response(STATUS_TEXT[Status.NotFound], { status: Status.NotFound });
+        } catch (error) {
+            console.error(error);
+            return new Response(STATUS_TEXT[Status.InternalServerError], { status: Status.InternalServerError });
         }
-
-        return new Response('Not Found', { status: 404 });
     }
+
 }
