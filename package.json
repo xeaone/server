@@ -2,7 +2,7 @@
     "private": false,
     "name": "@xeaone/server",
     "type": "module",
-    "version": "5.2.2",
+    "version": "5.2.3",
     "description": "X-Server Deno server module with built in middleware.",
     "main": "src/mod.ts",
     "module": "src/mod.ts",
@@ -10,7 +10,7 @@
         "src": "src",
         "example": "examples"
     },
-    "scripts": { },
+    "scripts": {},
     "repository": {
         "type": "git",
         "url": "git+https://github.com/xeaone/server.git"
