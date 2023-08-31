@@ -11,6 +11,8 @@ Deno server module with built in middleware.
 
 https://deno.land/x/xserver/src/mod.ts
 
+## Example
+
 ```ts
 import { Handler, Normalize, Router, Server } from 'https://deno.land/x/xserver/src/mod.ts';
 
@@ -31,7 +33,7 @@ Server((request) => handler.handle(request));
 
 ### Server
 
-Wraps Deno Serve
+Wraps Deno.serve
 
 ### Handler
 
@@ -89,7 +91,7 @@ Constructor Plugin that will route request to a handle method.
 ```ts
 import { Router } from 'https://deno.land/x/xserver/src/mod.ts';
 const router = new Router();
-router.post('/*', (context) => context.end(200, 'hello world')); // post method any path
+router.post('/*', (context) => context.ok('hello world')); // post method any path
 ```
 
 ### File
@@ -116,7 +118,8 @@ const session = new Session();
 
 session.validate((context) => {
     const { session } = context.tool.session.data;
-    if (!sessions.has(session)) return context.end(401); // return a response to prevent access
+    // return a response to prevent access end exit the handler loop early
+    if (!sessions.has(session)) return context.unauthorized();
 });
 
 session.secret('secret'); // unique secret
@@ -154,7 +157,7 @@ handler.add(forwarded);
 */
 handler.add(function (context) {
     const { for: [client] } = context.tool.forwarded.data;
-    return context.end(200, client);
+    return context.ok(client);
 });
 
 Server((request) => handler.handle(request), { port: 8080 });

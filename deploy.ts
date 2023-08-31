@@ -14,7 +14,7 @@ if (!n.success) throw new Error('npm auth');
 const pkg = JSON.parse(await Deno.readTextFile('./package.json'));
 pkg.version = increment(pkg.version, release as ReleaseType);
 
-await Deno.writeTextFile('./package.json', JSON.stringify(pkg, null, '\s\s\s\s'));
+await Deno.writeTextFile('./package.json', JSON.stringify(pkg, null, '    '));
 await cmd('git', ['commit', '-a', '-m', pkg.version]);
 await cmd('git',  ['push']);
 await cmd('git',  ['tag', pkg.version]);
