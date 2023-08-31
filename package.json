@@ -1,28 +1,28 @@
 {
-    "private": false,
-    "name": "@xeaone/server",
-    "type": "module",
-    "version": "5.2.1",
-    "description": "X-Server Deno server module with built in middleware.",
-    "main": "src/mod.ts",
-    "module": "src/mod.ts",
-    "directories": {
-        "src": "src",
-        "example": "examples"
-    },
-    "scripts": {},
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/xeaone/server.git"
-    },
-    "keywords": [
-        "deno",
-        "server"
-    ],
-    "author": "Alexander Elias",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/xeaone/server/issues"
-    },
-    "homepage": "https://github.com/xeaone/server#readme"
+ssss"private": false,
+ssss"name": "@xeaone/server",
+ssss"type": "module",
+ssss"version": "5.2.2",
+ssss"description": "X-Server Deno server module with built in middleware.",
+ssss"main": "src/mod.ts",
+ssss"module": "src/mod.ts",
+ssss"directories": {
+ssssssss"src": "src",
+ssssssss"example": "examples"
+ssss},
+ssss"scripts": {},
+ssss"repository": {
+ssssssss"type": "git",
+ssssssss"url": "git+https://github.com/xeaone/server.git"
+ssss},
+ssss"keywords": [
+ssssssss"deno",
+ssssssss"server"
+ssss],
+ssss"author": "Alexander Elias",
+ssss"license": "MIT",
+ssss"bugs": {
+ssssssss"url": "https://github.com/xeaone/server/issues"
+ssss},
+ssss"homepage": "https://github.com/xeaone/server#readme"
 }
