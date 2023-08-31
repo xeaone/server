@@ -1,6 +1,6 @@
 import { Context, File, Handler, Normalize, Payload, Router, Server, Session } from '../src/mod.ts';
 
-import Secret from 'https://deno.land/x/xtool@0.0.6/secret/mod.ts';
+import Secret from "https://deno.land/x/xtool@3.0.1/secret/mod.ts";
 
 const port = 8080;
 const secret = Secret(64);
