@@ -81,10 +81,12 @@ export default class File extends Plugin<boolean> {
             return context.notModified();
         }
 
-        const etag = stat.mtime ? await calculate(stat) : undefined;
+        const etag = await calculate(stat);
         if (etag) {
             context.headers.set('etag', etag);
-            if (!ifNoneMatch(ifNoneMatchValue, etag)) return context.notModified();
+            if (!ifNoneMatch(ifNoneMatchValue, etag)) {
+                return context.notModified();
+            }
         }
 
         if (!parsed) {
