@@ -1,20 +1,27 @@
 import { media, Status, STATUS_TEXT } from './deps.ts';
-import Type from './type.ts';
+import { calculate, ifNoneMatch } from './deps.ts';
+// import Type from './type.ts';
 
-type Body = BodyInit | Record<string, any> | Array<any> | null | undefined;
+type Head = Record<string, string>;
+type Body = BodyInit | null | undefined | Record<string, any> | Array<any>;
 type Method = 'get' | 'head' | 'post' | 'put' | 'delete' | 'connect' | 'options' | 'trace' | 'patch';
 
 export default class Context {
     tool: Record<string, any> = {};
 
-    url: URL;
-    method: Method;
     headers: Headers;
-    request: Request;
 
-    #code = 200;
     #body: Body;
-    #message?: string;
+    #code: Status;
+    #message: string;
+
+    #url: URL;
+    #method: Method;
+    #request: Request;
+
+    get url() { return this.#url; }
+    get method() { return this.#method; }
+    get request() { return this.#request; }
 
     codes = Status;
 
@@ -88,10 +95,13 @@ export default class Context {
     networkAuthenticationRequired = this.end.bind(this, 511);
 
     constructor(request: Request) {
-        this.request = request;
         this.headers = new Headers();
-        this.url = new URL(request.url);
-        this.method = (request.method.toLowerCase() as Method);
+
+        this.#code = 200;
+        this.#message = STATUS_TEXT[200];
+        this.#request = request;
+        this.#url = Object.freeze(new URL(request.url));
+        this.#method = (request.method.toLowerCase() as Method);
     }
 
     get(name: string) {
@@ -115,7 +125,13 @@ export default class Context {
         return this;
     }
 
-    head(head: Record<string, string>): this {
+    // status(status: Status): this {
+    //     this.#code = status;
+    //     this.#message = STATUS_TEXT[this.#code]
+    //     return this;
+    // }
+
+    head(head: Head): this {
         Object.entries(head).forEach(([name, value]) => this.headers.set(name, value));
         return this;
     }
@@ -125,28 +141,38 @@ export default class Context {
         return this;
     }
 
-    end(code?: Status, body?: Body, head?: Record<string, string>): Response {
+    async end(code?: Status, body?: Body, head?: Head): Promise<Response> {
 
         this.#code = code ?? this.#code;
-        this.#message = this.#message ?? STATUS_TEXT[this.#code as Status] ?? '';
-        this.#body = body ?? this.#body ?? this.#message ?? '';
+        this.#message = this.#message ?? STATUS_TEXT[this.#code];
+        this.#body = body ?? this.#body ?? this.#message;
 
-        const type = Type(this.#body);
+        if (head) this.head(head);
 
-        if (type === 'object' || type === 'array' || type === 'null') {
+        if (this.#body?.constructor === Object || this.#body instanceof Array) {
             this.#body = JSON.stringify(this.#body);
+            this.headers.set('content-type', media.contentType('json'));
+        }
 
-            if (!this.headers.has('content-type')) {
-                this.headers.set('content-type', media.contentType('json'));
+        if (
+            !this.headers.has('etag') &&
+            (typeof this.#body === 'string' || this.#body instanceof Uint8Array)
+            // || (this.#body && this.#body.mtime && 'size' in this.#body.size))
+        ) {
+            const etag = await calculate(this.#body);
+            if (etag) {
+                this.headers.set('etag', etag);
+                const ifNoneMatchValue = this.#request.headers.get('if-none-match');
+                if (!ifNoneMatch(ifNoneMatchValue, etag)) {
+                    this.#body = null;
+                    this.#code = Status.NotModified;
+                    this.#message = STATUS_TEXT[Status.NotModified];
+                }
             }
         }
 
-        if (head) {
-            Object.entries(head).forEach(([name, value]) => this.headers.set(name, value));
-        }
-
         // https://fetch.spec.whatwg.org/#statuses
-        // status codes that require null budy
+        // status codes that require null body
         if (
             this.#code === 101 ||
             this.#code === 103 ||
@@ -164,7 +190,7 @@ export default class Context {
      * @param variables
      * @returns Response
      */
-    html(strings: TemplateStringsArray, ...variables: unknown[]): Response {
+    html(strings: TemplateStringsArray, ...variables: unknown[]): Promise<Response> {
         let body = '';
 
         const length = strings.length;

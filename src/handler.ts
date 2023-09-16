@@ -38,8 +38,8 @@ export default class Handler {
 
                         const exact = paths.get(pathname) ?? plugin.data.any.get(pathname);
                         if (exact) {
-                            const response = await plugin.handle(context, exact);
-                            if (response instanceof Response) return response;
+                            const result = await plugin.handle(context, exact);
+                            if (result instanceof Response) return result;
                         }
 
                         if (exact !== undefined) {
@@ -55,8 +55,8 @@ export default class Handler {
                             const dynamic = paths.get(`${path}/*`) ?? plugin.data.any.get(`${path}/*`);
 
                             if (dynamic) {
-                                const response = await plugin.handle(context, dynamic);
-                                if (response instanceof Response) return response;
+                                const result = await plugin.handle(context, dynamic);
+                                if (result instanceof Response) return result;
                             }
 
                             if (dynamic !== undefined) {
@@ -68,8 +68,8 @@ export default class Handler {
                         const any = paths.get('/*') ?? paths.get('*') ?? plugin.data.any.get('/*') ?? plugin.data.any.get('*');
 
                         if (any) {
-                            const response = await plugin.handle(context, any);
-                            if (response instanceof Response) return response;
+                            const result = await plugin.handle(context, any);
+                            if (result instanceof Response) return result;
                         }
 
                         if (any !== undefined) {
@@ -78,8 +78,8 @@ export default class Handler {
                         }
                     }
                 } else if (type === 'function' || type === 'asyncfunction') {
-                    const response = await plugin(context);
-                    if (response instanceof Response) return response;
+                    const result = await plugin(context);
+                    if (result instanceof Response) return result;
                 } else {
                     throw new Error('Handler - not valid requires function or object');
                 }
@@ -87,10 +87,10 @@ export default class Handler {
                 result = iterator.next();
             }
 
-            return new Response(STATUS_TEXT[Status.NotFound], { status: Status.NotFound });
+            return new Response(STATUS_TEXT[Status.NotFound], { status: Status.NotFound, statusText: STATUS_TEXT[Status.NotFound] });
         } catch (error) {
             console.error(error);
-            return new Response(STATUS_TEXT[Status.InternalServerError], { status: Status.InternalServerError });
+            return new Response(STATUS_TEXT[Status.InternalServerError], { status: Status.InternalServerError, statusText: STATUS_TEXT[Status.InternalServerError] });
         }
     }
 

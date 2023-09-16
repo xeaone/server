@@ -19,9 +19,9 @@ export default class Cache extends Plugin<Options> {
     #noStore = false;
     #noCache = false;
     #mustRevalidate = false;
-    #maxAge = 300;
+    #maxAge = 0;
     #public = false;
-    #private = true;
+    #private = false;
 
     constructor(options?: Options) {
         super();
@@ -74,13 +74,14 @@ export default class Cache extends Plugin<Options> {
     handle(context: Context, options?: Options) {
         const value = [];
 
-        options = options ?? {
+        options = {
+            mustRevalidate: this.#mustRevalidate,
             noStore: this.#noStore,
             noCache: this.#noCache,
             private: this.#private,
             public: this.#public,
             maxAge: this.#maxAge,
-            mustRevalidate: this.#mustRevalidate,
+            ...(options ?? {})
         };
 
         if (options.noStore) {
@@ -98,7 +99,10 @@ export default class Cache extends Plugin<Options> {
             if (options.noCache) {
                 value.push(`no-cache`);
             } else {
-                value.push(`max-age=${options.maxAge}`);
+
+                if (options.maxAge) {
+                    value.push(`max-age=${options.maxAge}`);
+                }
 
                 if (options.mustRevalidate) {
                     value.push(`must-revalidate`);

@@ -8,8 +8,9 @@ interface Options {
 }
 
 const rangeRegex = /bytes=(?<start>\d+)?-(?<end>\d+)?$/u;
-const parseRangeHeader = function (rangeValue: string, fileSize: number) {
+const parseRangeHeader = function (rangeValue: string | null, fileSize: number) {
     if (!rangeValue) return null;
+    if (fileSize < 1) return null;
 
     const parsed = rangeValue.match(rangeRegex);
 
@@ -61,22 +62,20 @@ export default class File extends Plugin<boolean> {
     }
 
     async #send(context: Context, path: string, extension: string, stat: Deno.FileInfo) {
-        const range = context.request.headers.get('range');
-        const parsed = range && stat.size > 0 ? parseRangeHeader(range, stat.size) : null;
         const contentType = media.contentType(extension) ?? media.contentType('application/octet-stream');
-
-        const ifNoneMatchValue = context.request.headers.get('if-none-match');
-        const ifModifiedSinceValue = context.request.headers.get('if-modified-since');
 
         // date header if access timestamp is available
         if (stat.atime) context.headers.set('date', stat.atime.toUTCString());
 
-        // last modified header if last modification timestamp is available
+        // last modified header if modification timestamp is available
         if (stat.mtime) context.headers.set('last-modified', stat.mtime.toUTCString());
 
+        const ifNoneMatchValue = context.request.headers.get('if-none-match');
+        const ifModifiedSinceValue = context.request.headers.get('if-modified-since');
         if (
-            !ifNoneMatchValue && ifModifiedSinceValue && stat.mtime &&
-            stat.mtime.getTime() < new Date(ifModifiedSinceValue).getTime() + 1000
+            !ifNoneMatchValue &&
+            ifModifiedSinceValue &&
+            stat.mtime && stat.mtime.getTime() < new Date(ifModifiedSinceValue).getTime() + 1000
         ) {
             return context.notModified();
         }
@@ -89,39 +88,27 @@ export default class File extends Plugin<boolean> {
             }
         }
 
-        if (!parsed) {
+        const range = parseRangeHeader(context.request.headers.get('range'), stat.size);
+        if (!range) {
             context.headers.set('content-type', contentType);
             context.headers.set('content-length', `${stat.size}`);
             const file = await Deno.open(path, { read: true });
-
-            // const responseEncodings = ['gzip', 'deflate'];
-            // const requestEncodings = parseAcceptEncodingHeaders(context.request.headers.get('accept-encoding'));
-            // const responseEncoding = requestEncodings.find(requestEncoding => responseEncodings.includes(requestEncoding));
-
-            // if (responseEncoding) {
-            //     context.headers.set('content-encoding', responseEncoding);
-            //     const compression = new CompressionStream(responseEncoding);
-            //     return context.ok(file.readable.pipeThrough(compression));
-            // } else {
-            // return context.ok(file.readable);
-            // }
-
             return context.ok(file.readable);
         }
 
         // return 416 Range Not Satisfiable if invalid range header value
         if (
-            parsed.end < 0 ||
-            parsed.end < parsed.start ||
-            stat.size <= parsed.start
+            range.end < 0 ||
+            range.end < range.start ||
+            stat.size <= range.start
         ) {
             context.headers.set('content-range', `bytes */${stat.size}`);
             return context.requestedRangeNotSatisfiable();
         }
 
         // clamps the range header value
-        const start = Math.max(0, parsed.start);
-        const end = Math.min(parsed.end, stat.size - 1);
+        const start = Math.max(0, range.start);
+        const end = Math.min(range.end, stat.size - 1);
         const contentLength = end - start + 1;
 
         context.headers.set('accept-ranges', 'bytes');
