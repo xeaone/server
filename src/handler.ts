@@ -1,10 +1,9 @@
-import { STATUS_TEXT, Status } from './deps.ts';
+import { Status, STATUS_TEXT } from './deps.ts';
 import Context from './context.ts';
 import Handle from './handle.ts';
 import Plugin from './plugin.ts';
 
 export default class Handler {
-
     #plugins: Set<Handle | Plugin> = new Set();
 
     add(plugin: Handle | Plugin) {
@@ -26,7 +25,6 @@ export default class Handler {
                 const plugin = result.value;
 
                 if (plugin instanceof Plugin) {
-
                     if (typeof plugin.setup === 'function') {
                         await plugin.setup(context);
                     }
@@ -75,7 +73,6 @@ export default class Handler {
                             continue main;
                         }
                     }
-
                 } else if (typeof plugin === 'function') {
                     const result = await plugin(context);
                     if (result instanceof Response) return result;
@@ -92,5 +89,4 @@ export default class Handler {
             return new Response(STATUS_TEXT[Status.InternalServerError], { status: Status.InternalServerError, statusText: STATUS_TEXT[Status.InternalServerError] });
         }
     }
-
 }

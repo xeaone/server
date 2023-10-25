@@ -15,7 +15,6 @@ interface Options {
 }
 
 export default class Cache extends Plugin<Options> {
-
     #noStore = false;
     #noCache = false;
     #mustRevalidate = false;
@@ -38,7 +37,6 @@ export default class Cache extends Plugin<Options> {
         this.#public = options?.public ?? this.#public;
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#private
         this.#private = options?.private ?? this.#private;
-
     }
 
     noStore(data: boolean) {
@@ -81,15 +79,12 @@ export default class Cache extends Plugin<Options> {
             private: this.#private,
             public: this.#public,
             maxAge: this.#maxAge,
-            ...(options ?? {})
+            ...(options ?? {}),
         };
 
         if (options.noStore) {
-
             value.push('no-store');
-
         } else {
-
             if (options.private) {
                 value.push('private');
             } else if (options.public) {
@@ -99,7 +94,6 @@ export default class Cache extends Plugin<Options> {
             if (options.noCache) {
                 value.push(`no-cache`);
             } else {
-
                 if (options.maxAge) {
                     value.push(`max-age=${options.maxAge}`);
                 }
@@ -107,13 +101,9 @@ export default class Cache extends Plugin<Options> {
                 if (options.mustRevalidate) {
                     value.push(`must-revalidate`);
                 }
-
             }
-
         }
 
         context.headers.append('cache-control', value.join(', '));
     }
-
-
 }

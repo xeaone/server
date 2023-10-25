@@ -92,16 +92,17 @@ export default class Session extends Plugin<boolean> {
 
         this.#validate = options?.validate;
 
-        this.#forbidden = options?.forbidden ?? (() => new Response(
-            STATUS_TEXT[Status.Forbidden],
-            { status: Status.Forbidden }
-        ));
+        this.#forbidden = options?.forbidden ?? (() =>
+            new Response(
+                STATUS_TEXT[Status.Forbidden],
+                { status: Status.Forbidden },
+            ));
 
-        this.#unauthorized = options?.unauthorized ?? (() => new Response(
-            STATUS_TEXT[Status.Unauthorized],
-            { status: Status.Unauthorized, headers: { 'www-authenticate': `${this.scheme} realm="${this.realm}"` } }
-        ));
-
+        this.#unauthorized = options?.unauthorized ?? (() =>
+            new Response(
+                STATUS_TEXT[Status.Unauthorized],
+                { status: Status.Unauthorized, headers: { 'www-authenticate': `${this.scheme} realm="${this.realm}"` } },
+            ));
     }
 
     /**
@@ -376,7 +377,7 @@ export default class Session extends Plugin<boolean> {
         if (this.#domain) cookie += `;Domain=${this.#domain}`;
         if (this.#sameSite) cookie += `;SameSite=${this.#sameSite}`;
 
-        cookie += `;Max-Age=${this.#expiration/1000}`;
+        cookie += `;Max-Age=${this.#expiration / 1000}`;
 
         if (encoder.encode(cookie).length > 4090) throw new Error('Session - cookie size invalid');
 
@@ -446,7 +447,6 @@ export default class Session extends Plugin<boolean> {
 
         return validate;
     }
-
 }
 
 // const secret = 'secret';

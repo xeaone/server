@@ -5,12 +5,12 @@
         "e": "deno run -A --watch examples/server.ts"
     },
     "lint": {
-        "include": [ "." ],
-        "exclude": [ "examples" ]
+        "include": ["."],
+        "exclude": ["examples"]
     },
     "fmt": {
-        "include": [ "." ],
-        "exclude": [ "examples" ],
+        "include": ["."],
+        "exclude": ["examples"],
         "options": {
             "useTabs": false,
             "lineWidth": 800,

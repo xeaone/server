@@ -8,7 +8,6 @@ type Options = {
 };
 
 export default class Payload extends Plugin {
-
     #parse: Parse = 'json';
 
     constructor(options?: Options) {
@@ -49,5 +48,4 @@ export default class Payload extends Plugin {
             context.tool.payload.data = this.#initial();
         }
     }
-
 }

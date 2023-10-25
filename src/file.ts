@@ -1,4 +1,4 @@
-import { extname, join, media, ByteSliceStream, calculate, ifNoneMatch } from './deps.ts';
+import { ByteSliceStream, calculate, extname, ifNoneMatch, join, media } from './deps.ts';
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
@@ -217,5 +217,4 @@ export default class File extends Plugin<boolean> {
 
         return this.#send(context, path, extension, stat);
     }
-
 }

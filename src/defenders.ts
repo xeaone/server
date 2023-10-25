@@ -7,7 +7,6 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
 */
 
 /**
- *
  * ## Headers
  * ```
  * content-security-policy: default-src 'self'; upgrade-insecure-requests;
@@ -23,7 +22,7 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
  * x-frame-options: deny
  * x-permitted-cross-domain-policies: none
  * x-xss-protection: 1; mode=block
- *```
+ * ```
  */
 
 type CrossOriginEmbedderPolicy = '' | 'unsafe-none' | 'require-corp' | 'credentialless';
@@ -31,7 +30,6 @@ type CrossOriginResourcePolicy = '' | 'same-site' | 'same-origin' | 'cross-origi
 type CrossOriginOpenerPolicy = '' | 'unsafe-none' | 'same-origin-allow-popups' | 'same-origin';
 
 export default class Defenders extends Plugin {
-
     #contentSecurityPolicyDefaultSrc = `'self'`;
     contentSecurityPolicyDefaultSrc(data: string) {
         this.#contentSecurityPolicyDefaultSrc = data;
@@ -152,9 +150,9 @@ export default class Defenders extends Plugin {
         return this;
     }
 
-    #contentSecurityPolicyTrustedTypes= ``;
+    #contentSecurityPolicyTrustedTypes = ``;
     contentSecurityPolicyTrustedTypes(data: string) {
-        this.#contentSecurityPolicyTrustedTypes= data;
+        this.#contentSecurityPolicyTrustedTypes = data;
         return this;
     }
 
@@ -246,38 +244,29 @@ export default class Defenders extends Plugin {
     }
 
     handle(context: Context): Response | void {
-
         if (
             this.#contentSecurityPolicyDefaultSrc ||
-
             this.#contentSecurityPolicyBaseUri ||
             this.#contentSecurityPolicyChildSrc ||
             this.#contentSecurityPolicyConnectSrc ||
             this.#contentSecurityPolicyFontSrc ||
             this.#contentSecurityPolicyFormAction ||
-
             this.#contentSecurityPolicyFrameAncestors ||
             this.#contentSecurityPolicyFrameSrc ||
-
             this.#contentSecurityPolicyImgSrc ||
             this.#contentSecurityPolicyManifestSrc ||
             this.#contentSecurityPolicyMediaSrc ||
             this.#contentSecurityPolicyObjectSrc ||
             this.#contentSecurityPolicyPrefetchSrc ||
-
             this.#contentSecurityPolicyStyleSrc ||
             this.#contentSecurityPolicyStyleSrcAttr ||
             this.#contentSecurityPolicyStyleSrcElem ||
-
             this.#contentSecurityPolicyScriptSrc ||
             this.#contentSecurityPolicyScriptSrcAttr ||
             this.#contentSecurityPolicyScriptSrcElem ||
-
             this.#contentSecurityPolicyWorkerSrc ||
-
             this.#contentSecurityPolicyTrustedTypes ||
             this.#contentSecurityPolicyRequireTrustedTypesFor ||
-
             this.#contentSecurityPolicyUpgradeInsecureRequests
         ) {
             const data = [];
@@ -339,6 +328,5 @@ export default class Defenders extends Plugin {
         if (this.#xFrameOptions) context.headers.set('x-frame-options', this.#xFrameOptions);
 
         if (this.#xXssProtection) context.headers.set('x-xss-protection', this.#xXssProtection);
-
     }
 }

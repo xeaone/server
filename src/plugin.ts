@@ -3,7 +3,6 @@ import Context from './context.ts';
 type Method = 'get' | 'head' | 'post' | 'put' | 'delete' | 'connect' | 'options' | 'trace' | 'patch' | 'any';
 
 export default abstract class Plugin<V = any> {
-
     setup?(context: Context): Promise<Response | void> | Response | void;
     abstract handle(context: Context, value?: V): Promise<Response | void> | Response | void;
 
@@ -35,5 +34,4 @@ export default abstract class Plugin<V = any> {
     readonly trace = this.#map.bind(this, 'trace');
     readonly patch = this.#map.bind(this, 'patch');
     readonly any = this.#map.bind(this, 'any');
-
 }

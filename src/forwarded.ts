@@ -13,7 +13,6 @@ type ForwardedData = {
 };
 
 export default class Forwarded extends Plugin {
-
     setup(context: Context) {
         const data: ForwardedData = {
             by: [],
@@ -48,7 +47,5 @@ export default class Forwarded extends Plugin {
                 context.tool.forwarded.data[name].push(value);
             }
         }
-
     }
-    
 }
