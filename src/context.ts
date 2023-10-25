@@ -1,6 +1,5 @@
 import { media, Status, STATUS_TEXT } from './deps.ts';
 import { calculate, ifNoneMatch } from './deps.ts';
-// import Type from './type.ts';
 
 type Head = Record<string, string>;
 type Body = BodyInit | null | undefined | Record<string, any> | Array<any>;
