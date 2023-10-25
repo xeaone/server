@@ -1,4 +1,4 @@
-import { increment, ReleaseType } from 'https://deno.land/std@0.200.0/semver/mod.ts';
+import { increment, ReleaseType } from 'https://deno.land/std@0.204.0/semver/mod.ts';
 
 const cmd = (cmd:string, args?: string[]) => new Deno.Command(cmd, { args }).spawn().output();
 
