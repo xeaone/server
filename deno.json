@@ -3,15 +3,16 @@
         "d": "deno run -A deploy.ts",
         "e": "deno run -A --watch examples/server.ts"
     },
+    "lint": {
+        "include": [ "." ],
+        "exclude": [ "examples" ]
+    },
     "fmt": {
-        "files": {
-            "include": [
-                "./"
-            ]
-        },
+        "include": [ "." ],
+        "exclude": [ "examples" ],
         "options": {
             "useTabs": false,
-            "lineWidth": 500,
+            "lineWidth": 800,
             "indentWidth": 4,
             "singleQuote": true,
             "proseWrap": "preserve"
