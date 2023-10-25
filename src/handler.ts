@@ -2,7 +2,6 @@ import { STATUS_TEXT, Status } from './deps.ts';
 import Context from './context.ts';
 import Handle from './handle.ts';
 import Plugin from './plugin.ts';
-import Type from './type.ts';
 
 export default class Handler {
 
@@ -17,17 +16,16 @@ export default class Handler {
             const context = new Context(request);
             const iterator = this.#plugins.values();
 
-            const method = context.request.method.toLowerCase();
-            const pathname = new URL(context.request.url).pathname;
+            const method = request.method.toLowerCase();
+            const pathname = new URL(request.url).pathname;
 
             let result = iterator.next();
 
             main:
             while (!result.done) {
-                const plugin = result.value as any;
-                const type = Type(plugin);
+                const plugin = result.value;
 
-                if (type === 'object') {
+                if (plugin instanceof Plugin) {
 
                     if (typeof plugin.setup === 'function') {
                         await plugin.setup(context);
@@ -77,7 +75,8 @@ export default class Handler {
                             continue main;
                         }
                     }
-                } else if (type === 'function' || type === 'asyncfunction') {
+
+                } else if (typeof plugin === 'function') {
                     const result = await plugin(context);
                     if (result instanceof Response) return result;
                 } else {
