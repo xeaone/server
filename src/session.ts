@@ -1,4 +1,4 @@
-import { base64url, Status, STATUS_TEXT } from './deps.ts';
+import { decodeBase64Url, encodeBase64Url, Status, STATUS_TEXT } from './deps.ts';
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
@@ -233,7 +233,7 @@ export default class Session extends Plugin<boolean> {
             encoder.encode(data),
         );
 
-        return base64url.encode(
+        return encodeBase64Url(
             new Uint8Array([
                 ...salt,
                 ...vector,
@@ -248,7 +248,7 @@ export default class Session extends Plugin<boolean> {
         if (!encrypted) throw new Error('Session - encrypted required');
         if (!secret) throw new Error('Session - secret required');
 
-        const decoded = base64url.decode(encrypted);
+        const decoded = decodeBase64Url(encrypted);
 
         const vector = decoded.slice(0 + this.salt, this.salt + this.vector);
         const salt = decoded.slice(0, this.salt);
@@ -309,7 +309,7 @@ export default class Session extends Plugin<boolean> {
             encoder.encode(`${encrypted}|${stamped}`),
         );
 
-        return base64url.encode(signed);
+        return encodeBase64Url(signed);
     }
 
     async unsign(encrypted: string, stamped: string, signed: string, signature?: string) {
@@ -320,7 +320,7 @@ export default class Session extends Plugin<boolean> {
         if (!signed) throw new Error('Session - signed required');
         if (!signature) throw new Error('Session - signature required');
 
-        const decoded = base64url.decode(signed);
+        const decoded = decodeBase64Url(signed);
 
         const key = await crypto.subtle.importKey(
             'raw',
@@ -346,13 +346,13 @@ export default class Session extends Plugin<boolean> {
     stamp(time: number) {
         if (!time) throw new Error('Session - time required');
         const expiration = time + this.#expiration;
-        return base64url.encode(`${expiration}`);
+        return encodeBase64Url(`${expiration}`);
     }
 
     unstamp(time: string) {
         if (!time) throw new Error('Session - time required');
 
-        const decoded = decoder.decode(base64url.decode(time));
+        const decoded = decoder.decode(decodeBase64Url(time));
         const expiration = Number(decoded);
 
         if (!expiration) return false;

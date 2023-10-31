@@ -1,5 +1,6 @@
 export * as media from 'https://deno.land/std@0.204.0/media_types/mod.ts';
-export * as base64url from 'https://deno.land/std@0.204.0/encoding/base64url.ts';
+
+export { decodeBase64Url, encodeBase64Url } from 'https://deno.land/std@0.204.0/encoding/base64url.ts';
 
 export { extname, join } from 'https://deno.land/std@0.204.0/path/mod.ts';
 export { Status, STATUS_TEXT } from 'https://deno.land/std@0.204.0/http/mod.ts';
