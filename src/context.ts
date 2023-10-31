@@ -11,8 +11,8 @@ export default class Context {
     headers: Headers;
 
     #body: Body;
-    #code: Status;
-    #message: string;
+    #code?: Status;
+    #message?: string;
 
     #url: URL;
     #method: Method;
@@ -102,8 +102,9 @@ export default class Context {
     constructor(request: Request) {
         this.headers = new Headers();
 
-        this.#code = 200;
-        this.#message = STATUS_TEXT[200];
+        // this.#message;
+        // this.#code = 200;
+
         this.#request = request;
         this.#url = Object.freeze(new URL(request.url));
         this.#method = request.method.toLowerCase() as Method;
@@ -147,7 +148,7 @@ export default class Context {
     }
 
     async end(code?: Status, body?: Body, head?: Head): Promise<Response> {
-        this.#code = code ?? this.#code;
+        this.#code = code ?? this.#code ?? 200;
         this.#message = this.#message ?? STATUS_TEXT[this.#code];
         this.#body = body ?? this.#body ?? this.#message;
 
@@ -203,6 +204,6 @@ export default class Context {
             body += variables[index] ?? '';
         }
 
-        return this.end(this.#code ?? 200, body, { 'content-type': media.contentType('html') });
+        return this.end(this.#code, body, { 'content-type': media.contentType('html') });
     }
 }
