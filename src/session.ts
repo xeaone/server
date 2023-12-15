@@ -1,4 +1,4 @@
-import { decodeBase64Url, encodeBase64Url, Status, STATUS_TEXT } from './deps.ts';
+import { decodeBase64Url, encodeBase64Url, STATUS_CODE, STATUS_TEXT } from './deps.ts';
 import Context from './context.ts';
 import Plugin from './plugin.ts';
 
@@ -8,7 +8,6 @@ import Plugin from './plugin.ts';
 */
 
 type SameSite = 'Strict' | 'Lax' | 'None';
-
 type Forbidden = (context: Context) => Promise<Response | void> | Response | void;
 type Unauthorized = (context: Context) => Promise<Response | void> | Response | void;
 type Validate = (context: Context, data: any) => Promise<Response | void> | Response | void;
@@ -94,14 +93,17 @@ export default class Session extends Plugin<boolean> {
 
         this.#forbidden = options?.forbidden ?? (() =>
             new Response(
-                STATUS_TEXT[Status.Forbidden],
-                { status: Status.Forbidden },
+                STATUS_TEXT[STATUS_CODE.Forbidden],
+                { status: STATUS_CODE.Forbidden },
             ));
 
         this.#unauthorized = options?.unauthorized ?? (() =>
             new Response(
-                STATUS_TEXT[Status.Unauthorized],
-                { status: Status.Unauthorized, headers: { 'www-authenticate': `${this.scheme} realm="${this.realm}"` } },
+                STATUS_TEXT[STATUS_CODE.Unauthorized],
+                {
+                    status: STATUS_CODE.Unauthorized,
+                    headers: { 'www-authenticate': `${this.scheme} realm="${this.realm}"` },
+                },
             ));
     }
 

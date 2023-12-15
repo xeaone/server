@@ -1,5 +1,5 @@
 // deno-fmt-ignore-file
-import { Status, STATUS_TEXT } from './deps.ts';
+import { STATUS_CODE, STATUS_TEXT } from './deps.ts';
 
 import Forwarded from './forwarded.ts';
 import Defenders from './defenders.ts';
@@ -17,7 +17,7 @@ import File from './file.ts';
 import * as Handle from './handle.ts';
 import * as Plugin from './plugin.ts';
 
-const Codes = Status;
+const Codes = STATUS_CODE;
 const Messages = STATUS_TEXT;
 
 const Server = Deno.serve;

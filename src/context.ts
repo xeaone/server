@@ -1,9 +1,6 @@
-import { media, Status, STATUS_TEXT } from './deps.ts';
+import { media, STATUS_CODE, STATUS_TEXT, StatusCode } from './deps.ts';
 import { calculate, ifNoneMatch } from './deps.ts';
-
-type Head = Record<string, string>;
-type Body = BodyInit | null | undefined | Record<string, any> | Array<any>;
-type Method = 'get' | 'head' | 'post' | 'put' | 'delete' | 'connect' | 'options' | 'trace' | 'patch';
+import { Body, Head, Method } from './types.ts';
 
 export default class Context {
     tool: Record<string, any> = {};
@@ -11,7 +8,7 @@ export default class Context {
     headers: Headers;
 
     #body: Body;
-    #code?: Status;
+    #code?: StatusCode;
     #message?: string;
 
     #url: URL;
@@ -28,7 +25,7 @@ export default class Context {
         return this.#request;
     }
 
-    codes = Status;
+    codes = STATUS_CODE;
 
     redirect = Response.redirect;
 
@@ -121,7 +118,7 @@ export default class Context {
         Object.defineProperty(this.tool, name, property);
     }
 
-    code(code: Status): this {
+    code(code: StatusCode): this {
         this.#code = code;
         return this;
     }
@@ -147,7 +144,7 @@ export default class Context {
         return this;
     }
 
-    async end(code?: Status, body?: Body, head?: Head): Promise<Response> {
+    async end(code?: StatusCode, body?: Body, head?: Head): Promise<Response> {
         this.#code = code ?? this.#code ?? 200;
         this.#message = this.#message ?? STATUS_TEXT[this.#code];
         this.#body = body ?? this.#body ?? this.#message;
@@ -170,8 +167,8 @@ export default class Context {
                 const ifNoneMatchValue = this.#request.headers.get('if-none-match');
                 if (!ifNoneMatch(ifNoneMatchValue, etag)) {
                     this.#body = null;
-                    this.#code = Status.NotModified;
-                    this.#message = STATUS_TEXT[Status.NotModified];
+                    this.#code = STATUS_CODE.NotModified;
+                    this.#message = STATUS_TEXT[STATUS_CODE.NotModified];
                 }
             }
         }

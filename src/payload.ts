@@ -7,7 +7,7 @@ type Options = {
     parse?: Parse;
 };
 
-export default class Payload extends Plugin {
+export default class Payload extends Plugin<boolean> {
     #parse: Parse = 'json';
 
     constructor(options?: Options) {

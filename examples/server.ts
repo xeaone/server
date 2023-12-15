@@ -1,4 +1,4 @@
-import { Context, File, Handler, Normalize, Payload, Router, Server, Session } from '../src/mod.ts';
+import { File, Handler, Normalize, Payload, Router, Server, Session } from '../src/mod.ts';
 
 import Secret from "https://deno.land/x/xtool@3.0.1/secret/mod.ts";
 
@@ -17,7 +17,7 @@ const normalize = new Normalize();
 
 file.spa(true);
 file.get('/*', true);
-file.path('./examples/web');
+file.path('./examples/public');
 
 payload.post('/*', true);
 normalize.any('/*', true);

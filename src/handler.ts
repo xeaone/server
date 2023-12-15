@@ -1,7 +1,9 @@
-import { Status, STATUS_TEXT } from './deps.ts';
+import { STATUS_CODE, STATUS_TEXT } from './deps.ts';
 import Context from './context.ts';
 import Handle from './handle.ts';
 import Plugin from './plugin.ts';
+
+const partsPattern = /\/[^./]+\.[^./]+$|^\/+|\/+$/g;
 
 export default class Handler {
     #plugins: Set<Handle | Plugin> = new Set();
@@ -17,6 +19,23 @@ export default class Handler {
 
             const method = request.method.toLowerCase();
             const pathname = new URL(request.url).pathname;
+
+            if (
+                method !== 'get' &&
+                method !== 'head' &&
+                method !== 'post' &&
+                method !== 'put' &&
+                method !== 'delete' &&
+                method !== 'connect' &&
+                method !== 'options' &&
+                method !== 'trace' &&
+                method !== 'patch'
+            ) {
+                return new Response(STATUS_TEXT[ STATUS_CODE.MethodNotAllowed ], {
+                    status: STATUS_CODE.MethodNotAllowed,
+                    statusText: STATUS_TEXT[ STATUS_CODE.MethodNotAllowed ]
+                });
+            }
 
             let result = iterator.next();
 
@@ -44,7 +63,7 @@ export default class Handler {
                         }
 
                         let path = '';
-                        const parts = pathname.replace(/\/[^./]+\.[^./]+$|^\/+|\/+$/g, '').split('/');
+                        const parts = pathname.replace(partsPattern, '').split('/');
                         for (const part of parts) {
                             path += part ? `/${part}` : part;
 
@@ -83,10 +102,10 @@ export default class Handler {
                 result = iterator.next();
             }
 
-            return new Response(STATUS_TEXT[Status.NotFound], { status: Status.NotFound, statusText: STATUS_TEXT[Status.NotFound] });
+            return new Response(STATUS_TEXT[STATUS_CODE.NotFound], { status: STATUS_CODE.NotFound, statusText: STATUS_TEXT[STATUS_CODE.NotFound] });
         } catch (error) {
             console.error(error);
-            return new Response(STATUS_TEXT[Status.InternalServerError], { status: Status.InternalServerError, statusText: STATUS_TEXT[Status.InternalServerError] });
+            return new Response(STATUS_TEXT[STATUS_CODE.InternalServerError], { status: STATUS_CODE.InternalServerError, statusText: STATUS_TEXT[STATUS_CODE.InternalServerError] });
         }
     }
 }
