@@ -2,7 +2,7 @@
     "private": false,
     "name": "@xeaone/server",
     "type": "module",
-    "version": "5.3.0",
+    "version": "5.3.1",
     "description": "X-Server Deno server module with built in middleware.",
     "main": "src/mod.ts",
     "module": "src/mod.ts",

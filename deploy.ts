@@ -1,5 +1,5 @@
-import { format } from 'https://deno.land/std@0.209.0/semver/format.ts';
-import { increment, parse, ReleaseType } from 'https://deno.land/std@0.209.0/semver/mod.ts';
+import { format } from 'https://deno.land/std@0.213.0/semver/format.ts';
+import { increment, parse, ReleaseType } from 'https://deno.land/std@0.213.0/semver/mod.ts';
 
 const cmd = (cmd: string, args?: string[]) => new Deno.Command(cmd, { args }).spawn().output();
 
