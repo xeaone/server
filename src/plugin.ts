@@ -18,7 +18,8 @@ interface PluginData {
 
 export default abstract class Plugin<V = any> {
     setup?(context: Context): Promise<Response | void> | Response | void;
-    abstract handle(context: Context, value?: V): Promise<Response | void> | Response | void;
+
+    handle?(context: Context, value?: V): Promise<Response | void> | Response | void;
 
     #map(method: PluginMethod, path: string, value?: V): this {
         this.data[method].set(path, value);
@@ -38,14 +39,14 @@ export default abstract class Plugin<V = any> {
         any: new Map(),
     } as const;
 
-    readonly get = this.#map.bind(this, 'get');
-    readonly head = this.#map.bind(this, 'head');
-    readonly post = this.#map.bind(this, 'post');
-    readonly put = this.#map.bind(this, 'put');
-    readonly delete = this.#map.bind(this, 'delete');
-    readonly connect = this.#map.bind(this, 'connect');
-    readonly options = this.#map.bind(this, 'options');
-    readonly trace = this.#map.bind(this, 'trace');
-    readonly patch = this.#map.bind(this, 'patch');
-    readonly any = this.#map.bind(this, 'any');
+    readonly get: (path: string, value?: V) => this = this.#map.bind(this, 'get');
+    readonly head: (path: string, value?: V) => this = this.#map.bind(this, 'head');
+    readonly post: (path: string, value?: V) => this = this.#map.bind(this, 'post');
+    readonly put: (path: string, value?: V) => this = this.#map.bind(this, 'put');
+    readonly delete: (path: string, value?: V) => this = this.#map.bind(this, 'delete');
+    readonly connect: (path: string, value?: V) => this = this.#map.bind(this, 'connect');
+    readonly options: (path: string, value?: V) => this = this.#map.bind(this, 'options');
+    readonly trace: (path: string, value?: V) => this = this.#map.bind(this, 'trace');
+    readonly patch: (path: string, value?: V) => this = this.#map.bind(this, 'patch');
+    readonly any: (path: string, value?: V) => this = this.#map.bind(this, 'any');
 }

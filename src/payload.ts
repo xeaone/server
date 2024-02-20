@@ -15,7 +15,7 @@ export default class Payload extends Plugin<boolean> {
         this.#parse = options?.parse ?? this.#parse;
     }
 
-    #initial() {
+    #initial(): Record<any, any> | string | Blob | ArrayBuffer {
         switch (this.#parse) {
             case 'json':
                 return {};
@@ -37,11 +37,11 @@ export default class Payload extends Plugin<boolean> {
         }
     }
 
-    setup(context: Context) {
+    setup(context: Context): void {
         context.set('payload', { data: this.#initial() });
     }
 
-    async handle(context: Context) {
+    async handle(context: Context): Promise<void> {
         try {
             context.tool.payload.data = await context.request.clone()[this.#parse]();
         } catch {

@@ -1,9 +1,9 @@
-export * as media from 'https://deno.land/std@0.213.0/media_types/mod.ts';
+export * as media from 'jsr:@std/media-types@0.216';
 
-export { ByteSliceStream } from 'https://deno.land/std@0.213.0/streams/mod.ts';
-export { STATUS_CODE, STATUS_TEXT } from 'https://deno.land/std@0.213.0/http/status.ts';
-export type { StatusCode, StatusText } from 'https://deno.land/std@0.213.0/http/status.ts';
+export { ByteSliceStream } from 'jsr:@std/streams@0.216';
+export { STATUS_CODE, STATUS_TEXT } from 'jsr:@std/http@0.216/status';
+export type { StatusCode, StatusText } from 'jsr:@std/http@0.216/status';
 
-export { extname, join } from 'https://deno.land/std@0.213.0/path/mod.ts';
-export { calculate, ifNoneMatch } from 'https://deno.land/std@0.213.0/http/etag.ts';
-export { decodeBase64Url, encodeBase64Url } from 'https://deno.land/std@0.213.0/encoding/base64url.ts';
+export { extname, join } from 'jsr:@std/path@0.216';
+export { calculate, ifNoneMatch } from 'jsr:@std/http@0.216/etag';
+export { decodeBase64Url, encodeBase64Url } from 'jsr:@std/encoding@0.216/base64url';

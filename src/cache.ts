@@ -39,37 +39,37 @@ export default class Cache extends Plugin<Options> {
         this.#private = options?.private ?? this.#private;
     }
 
-    noStore(data: boolean) {
+    noStore(data: boolean): this {
         this.#noStore = data;
         return this;
     }
 
-    noCache(data: boolean) {
+    noCache(data: boolean): this {
         this.#noCache = data;
         return this;
     }
 
-    mustRevalidate(data: boolean) {
+    mustRevalidate(data: boolean): this {
         this.#mustRevalidate = data;
         return this;
     }
 
-    maxAge(data: number) {
+    maxAge(data: number): this {
         this.#maxAge = data;
         return this;
     }
 
-    public(data: boolean) {
+    public(data: boolean): this {
         this.#public = data;
         return this;
     }
 
-    private(data: boolean) {
+    private(data: boolean): this {
         this.#private = data;
         return this;
     }
 
-    handle(context: Context, options?: Options) {
+    handle(context: Context, options?: Options): void {
         const value = [];
 
         options = {

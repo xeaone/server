@@ -15,86 +15,19 @@ export default class Context {
     #method: Method;
     #request: Request;
 
-    get url() {
+    get url(): URL {
         return this.#url;
     }
-    get method() {
+    get method(): Method {
         return this.#method;
     }
-    get request() {
+    get request(): Request {
         return this.#request;
     }
 
     codes = STATUS_CODE;
 
     redirect = Response.redirect;
-
-    continue = this.end.bind(this, 100);
-    switchingProtocols = this.end.bind(this, 101);
-    processing = this.end.bind(this, 102);
-    earlyHints = this.end.bind(this, 103);
-
-    ok = this.end.bind(this, 200);
-    created = this.end.bind(this, 201);
-    accepted = this.end.bind(this, 202);
-    nonAuthoritativeInfo = this.end.bind(this, 203);
-    noContent = this.end.bind(this, 204);
-    resetContent = this.end.bind(this, 205);
-    partialContent = this.end.bind(this, 206);
-    multiStatus = this.end.bind(this, 207);
-    alreadyReported = this.end.bind(this, 208);
-    imUsed = this.end.bind(this, 226);
-
-    multipleChoices = this.end.bind(this, 300);
-    movedPermanently = this.end.bind(this, 301);
-    found = this.end.bind(this, 302);
-    seeOther = this.end.bind(this, 303);
-    notModified = this.end.bind(this, 304);
-    useProxy = this.end.bind(this, 305);
-    temporaryRedirect = this.end.bind(this, 307);
-    permanentRedirect = this.end.bind(this, 308);
-
-    badRequest = this.end.bind(this, 400);
-    unauthorized = this.end.bind(this, 401);
-    paymentRequired = this.end.bind(this, 402);
-    forbidden = this.end.bind(this, 403);
-    notFound = this.end.bind(this, 404);
-    methodNotAllowed = this.end.bind(this, 405);
-    notAcceptable = this.end.bind(this, 406);
-    proxyAuthRequired = this.end.bind(this, 407);
-    requestTimeout = this.end.bind(this, 408);
-    conflict = this.end.bind(this, 409);
-    gone = this.end.bind(this, 410);
-    lengthRequired = this.end.bind(this, 411);
-    preconditionFailed = this.end.bind(this, 412);
-    requestEntityTooLarge = this.end.bind(this, 413);
-    requestURITooLong = this.end.bind(this, 414);
-    unsupportedMediaType = this.end.bind(this, 415);
-    requestedRangeNotSatisfiable = this.end.bind(this, 416);
-    expectationFailed = this.end.bind(this, 417);
-    teapot = this.end.bind(this, 418);
-    misdirectedRequest = this.end.bind(this, 421);
-    unprocessableEntity = this.end.bind(this, 422);
-    locked = this.end.bind(this, 423);
-    failedDependency = this.end.bind(this, 424);
-    tooEarly = this.end.bind(this, 425);
-    upgradeRequired = this.end.bind(this, 426);
-    preconditionRequired = this.end.bind(this, 428);
-    tooManyRequests = this.end.bind(this, 429);
-    requestHeaderFieldsTooLarge = this.end.bind(this, 431);
-    unavailableForLegalReasons = this.end.bind(this, 451);
-
-    internalServerError = this.end.bind(this, 500);
-    notImplemented = this.end.bind(this, 501);
-    badGateway = this.end.bind(this, 502);
-    serviceUnavailable = this.end.bind(this, 503);
-    gatewayTimeout = this.end.bind(this, 504);
-    httpVersionNotSupported = this.end.bind(this, 505);
-    variantAlsoNegotiates = this.end.bind(this, 506);
-    insufficientStorage = this.end.bind(this, 507);
-    loopDetected = this.end.bind(this, 508);
-    notExtended = this.end.bind(this, 510);
-    networkAuthenticationRequired = this.end.bind(this, 511);
 
     constructor(request: Request) {
         this.headers = new Headers();
@@ -107,11 +40,202 @@ export default class Context {
         this.#method = request.method.toLowerCase() as Method;
     }
 
-    get(name: string) {
+    continue(body?: Body, head?: Head): Promise<Response> {
+        return this.end(100, body, head);
+    }
+    switchingProtocols(body?: Body, head?: Head): Promise<Response> {
+        return this.end(101, body, head);
+    }
+    processing(body?: Body, head?: Head): Promise<Response> {
+        return this.end(102, body, head);
+    }
+    earlyHints(body?: Body, head?: Head): Promise<Response> {
+        return this.end(103, body, head);
+    }
+
+    ok(body?: Body, head?: Head): Promise<Response> {
+        return this.end(200, body, head);
+    }
+    created(body?: Body, head?: Head): Promise<Response> {
+        return this.end(201, body, head);
+    }
+    accepted(body?: Body, head?: Head): Promise<Response> {
+        return this.end(202, body, head);
+    }
+    nonAuthoritativeInfo(body?: Body, head?: Head): Promise<Response> {
+        return this.end(203, body, head);
+    }
+    noContent(body?: Body, head?: Head): Promise<Response> {
+        return this.end(204, body, head);
+    }
+    resetContent(body?: Body, head?: Head): Promise<Response> {
+        return this.end(205, body, head);
+    }
+    partialContent(body?: Body, head?: Head): Promise<Response> {
+        return this.end(206, body, head);
+    }
+    multiStatus(body?: Body, head?: Head): Promise<Response> {
+        return this.end(207, body, head);
+    }
+    alreadyReported(body?: Body, head?: Head): Promise<Response> {
+        return this.end(208, body, head);
+    }
+    imUsed(body?: Body, head?: Head): Promise<Response> {
+        return this.end(226, body, head);
+    }
+
+    multipleChoices(body?: Body, head?: Head): Promise<Response> {
+        return this.end(300, body, head);
+    }
+    movedPermanently(body?: Body, head?: Head): Promise<Response> {
+        return this.end(301, body, head);
+    }
+    found(body?: Body, head?: Head): Promise<Response> {
+        return this.end(302, body, head);
+    }
+    seeOther(body?: Body, head?: Head): Promise<Response> {
+        return this.end(303, body, head);
+    }
+    notModified(body?: Body, head?: Head): Promise<Response> {
+        return this.end(304, body, head);
+    }
+    useProxy(body?: Body, head?: Head): Promise<Response> {
+        return this.end(305, body, head);
+    }
+    temporaryRedirect(body?: Body, head?: Head): Promise<Response> {
+        return this.end(307, body, head);
+    }
+    permanentRedirect(body?: Body, head?: Head): Promise<Response> {
+        return this.end(308, body, head);
+    }
+
+    badRequest(body?: Body, head?: Head): Promise<Response> {
+        return this.end(400, body, head);
+    }
+    unauthorized(body?: Body, head?: Head): Promise<Response> {
+        return this.end(401, body, head);
+    }
+    paymentRequired(body?: Body, head?: Head): Promise<Response> {
+        return this.end(402, body, head);
+    }
+    forbidden(body?: Body, head?: Head): Promise<Response> {
+        return this.end(403, body, head);
+    }
+    notFound(body?: Body, head?: Head): Promise<Response> {
+        return this.end(404, body, head);
+    }
+    methodNotAllowed(body?: Body, head?: Head): Promise<Response> {
+        return this.end(405, body, head);
+    }
+    notAcceptable(body?: Body, head?: Head): Promise<Response> {
+        return this.end(406, body, head);
+    }
+    proxyAuthRequired(body?: Body, head?: Head): Promise<Response> {
+        return this.end(407, body, head);
+    }
+    requestTimeout(body?: Body, head?: Head): Promise<Response> {
+        return this.end(408, body, head);
+    }
+    conflict(body?: Body, head?: Head): Promise<Response> {
+        return this.end(409, body, head);
+    }
+    gone(body?: Body, head?: Head): Promise<Response> {
+        return this.end(410, body, head);
+    }
+    lengthRequired(body?: Body, head?: Head): Promise<Response> {
+        return this.end(411, body, head);
+    }
+    preconditionFailed(body?: Body, head?: Head): Promise<Response> {
+        return this.end(412, body, head);
+    }
+    requestEntityTooLarge(body?: Body, head?: Head): Promise<Response> {
+        return this.end(413, body, head);
+    }
+    requestURITooLong(body?: Body, head?: Head): Promise<Response> {
+        return this.end(414, body, head);
+    }
+    unsupportedMediaType(body?: Body, head?: Head): Promise<Response> {
+        return this.end(415, body, head);
+    }
+    requestedRangeNotSatisfiable(body?: Body, head?: Head): Promise<Response> {
+        return this.end(416, body, head);
+    }
+    expectationFailed(body?: Body, head?: Head): Promise<Response> {
+        return this.end(417, body, head);
+    }
+    teapot(body?: Body, head?: Head): Promise<Response> {
+        return this.end(418, body, head);
+    }
+    misdirectedRequest(body?: Body, head?: Head): Promise<Response> {
+        return this.end(421, body, head);
+    }
+    unprocessableEntity(body?: Body, head?: Head): Promise<Response> {
+        return this.end(422, body, head);
+    }
+    locked(body?: Body, head?: Head): Promise<Response> {
+        return this.end(423, body, head);
+    }
+    failedDependency(body?: Body, head?: Head): Promise<Response> {
+        return this.end(424, body, head);
+    }
+    tooEarly(body?: Body, head?: Head): Promise<Response> {
+        return this.end(425, body, head);
+    }
+    upgradeRequired(body?: Body, head?: Head): Promise<Response> {
+        return this.end(426, body, head);
+    }
+    preconditionRequired(body?: Body, head?: Head): Promise<Response> {
+        return this.end(428, body, head);
+    }
+    tooManyRequests(body?: Body, head?: Head): Promise<Response> {
+        return this.end(429, body, head);
+    }
+    requestHeaderFieldsTooLarge(body?: Body, head?: Head): Promise<Response> {
+        return this.end(431, body, head);
+    }
+    unavailableForLegalReasons(body?: Body, head?: Head): Promise<Response> {
+        return this.end(451, body, head);
+    }
+
+    internalServerError(body?: Body, head?: Head): Promise<Response> {
+        return this.end(500, body, head);
+    }
+    notImplemented(body?: Body, head?: Head): Promise<Response> {
+        return this.end(501, body, head);
+    }
+    badGateway(body?: Body, head?: Head): Promise<Response> {
+        return this.end(502, body, head);
+    }
+    serviceUnavailable(body?: Body, head?: Head): Promise<Response> {
+        return this.end(503, body, head);
+    }
+    gatewayTimeout(body?: Body, head?: Head): Promise<Response> {
+        return this.end(504, body, head);
+    }
+    httpVersionNotSupported(body?: Body, head?: Head): Promise<Response> {
+        return this.end(505, body, head);
+    }
+    variantAlsoNegotiates(body?: Body, head?: Head): Promise<Response> {
+        return this.end(506, body, head);
+    }
+    insufficientStorage(body?: Body, head?: Head): Promise<Response> {
+        return this.end(507, body, head);
+    }
+    loopDetected(body?: Body, head?: Head): Promise<Response> {
+        return this.end(508, body, head);
+    }
+    notExtended(body?: Body, head?: Head): Promise<Response> {
+        return this.end(510, body, head);
+    }
+    networkAuthenticationRequired(body?: Body, head?: Head): Promise<Response> {
+        return this.end(511, body, head);
+    }
+
+    get(name: string): Record<string, any> {
         return this.tool[name];
     }
 
-    set(name: string, value: unknown) {
+    set(name: string, value: unknown): void {
         if (name in this.tool) return;
         const enumerable = true;
         const property = { enumerable, value };

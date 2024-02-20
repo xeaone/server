@@ -61,7 +61,7 @@ export default class File extends Plugin<boolean> {
         return this;
     }
 
-    async #send(context: Context, path: string, extension: string, stat: Deno.FileInfo) {
+    async #send(context: Context, path: string, extension: string, stat: Deno.FileInfo): Promise<Response> {
         const contentType = media.contentType(extension) ?? media.contentType('application/octet-stream');
 
         // date header if access timestamp is available

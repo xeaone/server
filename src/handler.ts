@@ -12,7 +12,7 @@ export default class Handler {
         this.#plugins.add(plugin);
     }
 
-    async handle(request: Request) {
+    async handle(request: Request): Promise<Response> {
         try {
             const context = new Context(request);
             const iterator = this.#plugins.values();
@@ -31,9 +31,9 @@ export default class Handler {
                 method !== 'trace' &&
                 method !== 'patch'
             ) {
-                return new Response(STATUS_TEXT[ STATUS_CODE.MethodNotAllowed ], {
+                return new Response(STATUS_TEXT[STATUS_CODE.MethodNotAllowed], {
                     status: STATUS_CODE.MethodNotAllowed,
-                    statusText: STATUS_TEXT[ STATUS_CODE.MethodNotAllowed ]
+                    statusText: STATUS_TEXT[STATUS_CODE.MethodNotAllowed],
                 });
             }
 

@@ -199,7 +199,7 @@ export default class Session extends Plugin<boolean> {
         return this;
     }
 
-    async encrypt(data: string, secret?: string) {
+    async encrypt(data: string, secret?: string): Promise<string> {
         secret = secret || this.#secret;
 
         if (!data) throw new Error('Session - data required');
@@ -244,7 +244,7 @@ export default class Session extends Plugin<boolean> {
         );
     }
 
-    async decrypt(encrypted: string, secret?: string) {
+    async decrypt(encrypted: string, secret?: string): Promise<string> {
         secret = secret || this.#secret;
 
         if (!encrypted) throw new Error('Session - encrypted required');
@@ -290,7 +290,7 @@ export default class Session extends Plugin<boolean> {
         return parse === 't' ? JSON.parse(content) : content;
     }
 
-    async sign(encrypted: string, stamped: string, signature?: string) {
+    async sign(encrypted: string, stamped: string, signature?: string): Promise<string> {
         signature = signature || this.#signature;
 
         if (!encrypted) throw new Error('Session - encrypted required');
@@ -314,7 +314,7 @@ export default class Session extends Plugin<boolean> {
         return encodeBase64Url(signed);
     }
 
-    async unsign(encrypted: string, stamped: string, signed: string, signature?: string) {
+    async unsign(encrypted: string, stamped: string, signed: string, signature?: string): Promise<boolean> {
         signature = signature || this.#signature;
 
         if (!encrypted) throw new Error('Session - encrypted required');
@@ -345,13 +345,13 @@ export default class Session extends Plugin<boolean> {
         return decoder.decode(computed) === decoder.decode(decoded);
     }
 
-    stamp(time: number) {
+    stamp(time: number): string {
         if (!time) throw new Error('Session - time required');
         const expiration = time + this.#expiration;
         return encodeBase64Url(`${expiration}`);
     }
 
-    unstamp(time: string) {
+    unstamp(time: string): boolean {
         if (!time) throw new Error('Session - time required');
 
         const decoded = decoder.decode(decodeBase64Url(time));
@@ -362,7 +362,7 @@ export default class Session extends Plugin<boolean> {
         return Date.now() < expiration;
     }
 
-    async create(context: Context, data: string | Record<string, unknown>) {
+    async create(context: Context, data: string | Record<string, unknown>): Promise<void> {
         if (!data) throw new Error('Session - data required');
 
         const time = Date.now();
@@ -386,7 +386,7 @@ export default class Session extends Plugin<boolean> {
         context.headers.append('set-cookie', cookie);
     }
 
-    destroy(context: Context) {
+    destroy(context: Context): void {
         let cookie = '';
 
         if (this.#secure) cookie += ';Secure';
@@ -398,7 +398,7 @@ export default class Session extends Plugin<boolean> {
         context.headers.append('set-cookie', cookie);
     }
 
-    cookie(context: Context) {
+    cookie(context: Context): string | null {
         const header = context.request.headers.get('cookie') || '';
         const cookies = header.split(/\s*;\s*/);
 
@@ -412,7 +412,7 @@ export default class Session extends Plugin<boolean> {
         return null;
     }
 
-    setup(context: Context) {
+    setup(context: Context): void {
         context.set('session', {
             data: null,
             create: this.create.bind(this, context),

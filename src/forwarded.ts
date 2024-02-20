@@ -13,7 +13,7 @@ type ForwardedData = {
 };
 
 export default class Forwarded extends Plugin {
-    setup(context: Context) {
+    setup(context: Context): void {
         const data: ForwardedData = {
             by: [],
             for: [],
@@ -24,7 +24,7 @@ export default class Forwarded extends Plugin {
         context.set('forwarded', { data });
     }
 
-    handle(context: Context) {
+    handle(context: Context): void {
         const forwarded = context.request.headers.get('forwarded') ?? context.request.headers.get('Forwarded') ?? '';
 
         const parts = forwarded.toLowerCase().split(';');

@@ -75,7 +75,7 @@ export {
     Messages as messages,
 };
 
-export default Object.freeze({
+export default {
 
     Forwarded,
     forwarded: Forwarded,
@@ -127,4 +127,4 @@ export default Object.freeze({
 
     Messages,
     messages: Messages,
-});
+} as const;

@@ -25,7 +25,7 @@ export default class Socket extends Plugin {
         this.#message = message;
     }
 
-    handle(context: Context) {
+    handle(context: Context): Response | undefined {
         const { request } = context;
         const { headers } = request;
 

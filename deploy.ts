@@ -1,10 +1,10 @@
-import { format } from 'https://deno.land/std@0.213.0/semver/format.ts';
-import { increment, parse, ReleaseType } from 'https://deno.land/std@0.213.0/semver/mod.ts';
+// import { format } from 'https://deno.land/std@0.213.0/semver/format.ts';
+// import { increment, parse, ReleaseType } from 'https://deno.land/std@0.213.0/semver/mod.ts';
 
 const cmd = (cmd: string, args?: string[]) => new Deno.Command(cmd, { args }).spawn().output();
 
-const [release] = Deno.args;
-if (!release) throw new Error('release required');
+// const [release] = Deno.args;
+// if (!release) throw new Error('release required');
 
 const f = await cmd('git', ['fetch']);
 if (!f.success) throw new Error('git auth');
@@ -13,7 +13,7 @@ const n = await cmd('npm', ['whoami']);
 if (!n.success) throw new Error('npm auth');
 
 const pkg = JSON.parse(await Deno.readTextFile('./package.json'));
-pkg.version = format(increment(parse(pkg.version), release as ReleaseType));
+// pkg.version = format(increment(parse(pkg.version), release as ReleaseType));
 
 console.log(pkg.version);
 

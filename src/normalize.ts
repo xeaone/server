@@ -13,12 +13,12 @@ export default class Normalize extends Plugin {
     #www = false;
     #https = false;
 
-    www(data: boolean) {
+    www(data: boolean): this {
         this.#www = data;
         return this;
     }
 
-    https(data: boolean) {
+    https(data: boolean): this {
         this.#https = data;
         return this;
     }

@@ -31,214 +31,214 @@ type CrossOriginOpenerPolicy = '' | 'unsafe-none' | 'same-origin-allow-popups' |
 
 export default class Defenders extends Plugin {
     #contentSecurityPolicyDefaultSrc = `'self'`;
-    contentSecurityPolicyDefaultSrc(data: string) {
+    contentSecurityPolicyDefaultSrc(data: string): this {
         this.#contentSecurityPolicyDefaultSrc = data;
         return this;
     }
 
     #contentSecurityPolicyBaseUri = ``;
-    contentSecurityPolicyBaseUri(data: string) {
+    contentSecurityPolicyBaseUri(data: string): this {
         this.#contentSecurityPolicyBaseUri = data;
         return this;
     }
 
     #contentSecurityPolicyChildSrc = ``;
-    contentSecurityPolicyChildSrc(data: string) {
+    contentSecurityPolicyChildSrc(data: string): this {
         this.#contentSecurityPolicyChildSrc = data;
         return this;
     }
 
     #contentSecurityPolicyConnectSrc = ``;
-    contentSecurityPolicyConnectSrc(data: string) {
+    contentSecurityPolicyConnectSrc(data: string): this{
         this.#contentSecurityPolicyConnectSrc = data;
         return this;
     }
 
     #contentSecurityPolicyFontSrc = ``;
-    contentSecurityPolicyFontSrc(data: string) {
+    contentSecurityPolicyFontSrc(data: string): this{
         this.#contentSecurityPolicyFontSrc = data;
         return this;
     }
 
     #contentSecurityPolicyFormAction = ``;
-    contentSecurityPolicyFormSrc(data: string) {
+    contentSecurityPolicyFormSrc(data: string): this{
         this.#contentSecurityPolicyFormAction = data;
         return this;
     }
 
     #contentSecurityPolicyFrameAncestors = ``;
-    contentSecurityPolicyFrameAncestors(data: string) {
+    contentSecurityPolicyFrameAncestors(data: string): this{
         this.#contentSecurityPolicyFrameAncestors = data;
         return this;
     }
 
     #contentSecurityPolicyFrameSrc = ``;
-    contentSecurityPolicyFrameSrc(data: string) {
+    contentSecurityPolicyFrameSrc(data: string): this{
         this.#contentSecurityPolicyFrameSrc = data;
         return this;
     }
 
     #contentSecurityPolicyImgSrc = ``;
-    contentSecurityPolicyImgSrc(data: string) {
+    contentSecurityPolicyImgSrc(data: string): this{
         this.#contentSecurityPolicyImgSrc = data;
         return this;
     }
 
     #contentSecurityPolicyManifestSrc = ``;
-    contentSecurityPolicyManifestSrc(data: string) {
+    contentSecurityPolicyManifestSrc(data: string): this{
         this.#contentSecurityPolicyManifestSrc = data;
         return this;
     }
 
     #contentSecurityPolicyMediaSrc = ``;
-    contentSecurityPolicyMediaSrc(data: string) {
+    contentSecurityPolicyMediaSrc(data: string): this{
         this.#contentSecurityPolicyMediaSrc = data;
         return this;
     }
 
     #contentSecurityPolicyObjectSrc = ``;
-    contentSecurityPolicyObjectSrc(data: string) {
+    contentSecurityPolicyObjectSrc(data: string): this{
         this.#contentSecurityPolicyObjectSrc = data;
         return this;
     }
 
     #contentSecurityPolicyPrefetchSrc = ``;
-    contentSecurityPolicyPrefetchSrc(data: string) {
+    contentSecurityPolicyPrefetchSrc(data: string): this{
         this.#contentSecurityPolicyPrefetchSrc = data;
         return this;
     }
 
     #contentSecurityPolicyStyleSrc = ``;
-    contentSecurityPolicyStyleSrc(data: string) {
+    contentSecurityPolicyStyleSrc(data: string): this{
         this.#contentSecurityPolicyStyleSrc = data;
         return this;
     }
 
     #contentSecurityPolicyStyleSrcAttr = ``;
-    contentSecurityPolicyStyleSrcAttr(data: string) {
+    contentSecurityPolicyStyleSrcAttr(data: string): this{
         this.#contentSecurityPolicyStyleSrcAttr = data;
         return this;
     }
 
     #contentSecurityPolicyStyleSrcElem = ``;
-    contentSecurityPolicyStyleSrcElem(data: string) {
+    contentSecurityPolicyStyleSrcElem(data: string): this{
         this.#contentSecurityPolicyStyleSrcElem = data;
         return this;
     }
 
     #contentSecurityPolicyScriptSrc = ``;
-    contentSecurityPolicyScriptSrc(data: string) {
+    contentSecurityPolicyScriptSrc(data: string): this{
         this.#contentSecurityPolicyScriptSrc = data;
         return this;
     }
 
     #contentSecurityPolicyScriptSrcAttr = ``;
-    contentSecurityPolicyScriptSrcAttr(data: string) {
+    contentSecurityPolicyScriptSrcAttr(data: string): this{
         this.#contentSecurityPolicyScriptSrcAttr = data;
         return this;
     }
 
     #contentSecurityPolicyScriptSrcElem = ``;
-    contentSecurityPolicyScriptSrcElem(data: string) {
+    contentSecurityPolicyScriptSrcElem(data: string): this{
         this.#contentSecurityPolicyScriptSrcElem = data;
         return this;
     }
 
     #contentSecurityPolicyWorkerSrc = ``;
-    contentSecurityPolicyWorkerSrc(data: string) {
+    contentSecurityPolicyWorkerSrc(data: string): this{
         this.#contentSecurityPolicyWorkerSrc = data;
         return this;
     }
 
     #contentSecurityPolicyTrustedTypes = ``;
-    contentSecurityPolicyTrustedTypes(data: string) {
+    contentSecurityPolicyTrustedTypes(data: string): this{
         this.#contentSecurityPolicyTrustedTypes = data;
         return this;
     }
 
     #contentSecurityPolicyRequireTrustedTypesFor = ``;
-    contentSecurityPolicyRequireTrustedTypesFor(data: string) {
+    contentSecurityPolicyRequireTrustedTypesFor(data: string): this{
         this.#contentSecurityPolicyRequireTrustedTypesFor = data;
         return this;
     }
 
     #contentSecurityPolicyUpgradeInsecureRequests = `upgrade-insecure-requests`;
-    contentSecurityPolicyUpgradeInsecureRequests(data: string) {
+    contentSecurityPolicyUpgradeInsecureRequests(data: string): this{
         this.#contentSecurityPolicyUpgradeInsecureRequests = data;
         return this;
     }
 
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Embedder-Policy
     #crossOriginEmbedderPolicy: CrossOriginEmbedderPolicy = 'require-corp';
-    crossOriginEmbedderPolicy(data: CrossOriginEmbedderPolicy) {
+    crossOriginEmbedderPolicy(data: CrossOriginEmbedderPolicy): this{
         this.#crossOriginEmbedderPolicy = data;
         return this;
     }
 
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Cross-Origin_Resource_Policy
     #crossOriginResourcePolicy: CrossOriginResourcePolicy = 'same-origin';
-    crossOriginResourcePolicy(data: CrossOriginResourcePolicy) {
+    crossOriginResourcePolicy(data: CrossOriginResourcePolicy): this{
         this.#crossOriginResourcePolicy = data;
         return this;
     }
 
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Opener-Policy
     #crossOriginOpenerPolicy: CrossOriginOpenerPolicy = 'same-origin';
-    crossOriginOpenerPolicy(data: CrossOriginOpenerPolicy) {
+    crossOriginOpenerPolicy(data: CrossOriginOpenerPolicy): this{
         this.#crossOriginOpenerPolicy = data;
         return this;
     }
 
     #originAgentCluster = '?1';
-    originAgentCluster(data: string) {
+    originAgentCluster(data: string): this{
         this.#originAgentCluster = data;
         return this;
     }
 
     #referrerPolicy = 'no-referrer';
-    referrerPolicy(data: string) {
+    referrerPolicy(data: string): this{
         this.#referrerPolicy = data;
         return this;
     }
 
     #strictTransportSecurity = 'max-age=63072000; includeSubDomains; preload';
-    strictTransportSecurity(data: string) {
+    strictTransportSecurity(data: string): this{
         this.#strictTransportSecurity = data;
         return this;
     }
 
     #xContentTypeOptions = 'nosniff';
-    xContentTypeOptions(data: string) {
+    xContentTypeOptions(data: string): this{
         this.#xContentTypeOptions = data;
         return this;
     }
 
     #xDnsPrefetchControl = 'off';
-    xDnsPrefetchControl(data: string) {
+    xDnsPrefetchControl(data: string): this{
         this.#xDnsPrefetchControl = data;
         return this;
     }
 
     #xDownloadOptions = 'noopen';
-    xDownloadOptions(data: string) {
+    xDownloadOptions(data: string): this{
         this.#xDownloadOptions = data;
         return this;
     }
 
     #xFrameOptions = 'deny';
-    xFrameOptions(data: string) {
+    xFrameOptions(data: string): this{
         this.#xFrameOptions = data;
         return this;
     }
 
     #xPermittedCrossDomainPolicies = 'none';
-    xPermittedCrossDomainPolicies(data: string) {
+    xPermittedCrossDomainPolicies(data: string): this{
         this.#xPermittedCrossDomainPolicies = data;
         return this;
     }
 
     #xXssProtection = '1; mode=block';
-    xXssProtection(data: string) {
+    xXssProtection(data: string): this{
         this.#xXssProtection = data;
         return this;
     }
