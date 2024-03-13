@@ -20,6 +20,9 @@ if (!dp.success) throw new Error('deno publish');
 
 const version = format(increment(parse(d.version), release as ReleaseType));
 
+p.version = `${version}`;
+d.version = `${version}`;
+
 await Deno.writeTextFile('package.json', JSON.stringify(p, null, '    '));
 await Deno.writeTextFile('deno.json', JSON.stringify(d, null, '    '));
 
