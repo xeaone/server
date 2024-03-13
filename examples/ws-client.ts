@@ -25,17 +25,17 @@ function open(e: Event) {
     w.send('foo');
 }
 
-function close(e: Event) {
+function close() {
     // const w = e.target as WebSocket;
     console.log('close');
 }
 
-function error(e: Event) {
+function error() {
     // const w = e.target as WebSocket;
     console.log('error');
 }
 
-function message(e: MessageEvent) {
+function message() {
     // const w = e.target as WebSocket;
     console.log('client message: ', e.data);
     // w.send(new Date().toString());

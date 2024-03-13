@@ -1,6 +1,6 @@
 import { File, Handler, Normalize, Payload, Router, Server, Session } from '../src/mod.ts';
 
-import Secret from "https://deno.land/x/xtool@3.0.1/secret/mod.ts";
+import Secret from 'https://deno.land/x/xtool@3.0.1/secret/mod.ts';
 
 const secret = Secret(64);
 const signature = Secret(64);
@@ -39,7 +39,7 @@ router.get('/error', () => {
     throw new Error('error');
 });
 
-router.post('/sign-up', context => {
+router.post('/sign-up', (context) => {
     const { username, password } = context.tool.payload.data;
     if (!username) return context.badRequest('username required');
     if (!password) return context.badRequest('password required');
@@ -73,6 +73,6 @@ handler.add(session);
 handler.add(router);
 handler.add(file);
 
-Server(request => handler.handle(request));
+Server((request) => handler.handle(request));
 
 // console.log(`listening: ${port}`);

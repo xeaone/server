@@ -49,196 +49,196 @@ export default class Defenders extends Plugin {
     }
 
     #contentSecurityPolicyConnectSrc = ``;
-    contentSecurityPolicyConnectSrc(data: string): this{
+    contentSecurityPolicyConnectSrc(data: string): this {
         this.#contentSecurityPolicyConnectSrc = data;
         return this;
     }
 
     #contentSecurityPolicyFontSrc = ``;
-    contentSecurityPolicyFontSrc(data: string): this{
+    contentSecurityPolicyFontSrc(data: string): this {
         this.#contentSecurityPolicyFontSrc = data;
         return this;
     }
 
     #contentSecurityPolicyFormAction = ``;
-    contentSecurityPolicyFormSrc(data: string): this{
+    contentSecurityPolicyFormSrc(data: string): this {
         this.#contentSecurityPolicyFormAction = data;
         return this;
     }
 
     #contentSecurityPolicyFrameAncestors = ``;
-    contentSecurityPolicyFrameAncestors(data: string): this{
+    contentSecurityPolicyFrameAncestors(data: string): this {
         this.#contentSecurityPolicyFrameAncestors = data;
         return this;
     }
 
     #contentSecurityPolicyFrameSrc = ``;
-    contentSecurityPolicyFrameSrc(data: string): this{
+    contentSecurityPolicyFrameSrc(data: string): this {
         this.#contentSecurityPolicyFrameSrc = data;
         return this;
     }
 
     #contentSecurityPolicyImgSrc = ``;
-    contentSecurityPolicyImgSrc(data: string): this{
+    contentSecurityPolicyImgSrc(data: string): this {
         this.#contentSecurityPolicyImgSrc = data;
         return this;
     }
 
     #contentSecurityPolicyManifestSrc = ``;
-    contentSecurityPolicyManifestSrc(data: string): this{
+    contentSecurityPolicyManifestSrc(data: string): this {
         this.#contentSecurityPolicyManifestSrc = data;
         return this;
     }
 
     #contentSecurityPolicyMediaSrc = ``;
-    contentSecurityPolicyMediaSrc(data: string): this{
+    contentSecurityPolicyMediaSrc(data: string): this {
         this.#contentSecurityPolicyMediaSrc = data;
         return this;
     }
 
     #contentSecurityPolicyObjectSrc = ``;
-    contentSecurityPolicyObjectSrc(data: string): this{
+    contentSecurityPolicyObjectSrc(data: string): this {
         this.#contentSecurityPolicyObjectSrc = data;
         return this;
     }
 
     #contentSecurityPolicyPrefetchSrc = ``;
-    contentSecurityPolicyPrefetchSrc(data: string): this{
+    contentSecurityPolicyPrefetchSrc(data: string): this {
         this.#contentSecurityPolicyPrefetchSrc = data;
         return this;
     }
 
     #contentSecurityPolicyStyleSrc = ``;
-    contentSecurityPolicyStyleSrc(data: string): this{
+    contentSecurityPolicyStyleSrc(data: string): this {
         this.#contentSecurityPolicyStyleSrc = data;
         return this;
     }
 
     #contentSecurityPolicyStyleSrcAttr = ``;
-    contentSecurityPolicyStyleSrcAttr(data: string): this{
+    contentSecurityPolicyStyleSrcAttr(data: string): this {
         this.#contentSecurityPolicyStyleSrcAttr = data;
         return this;
     }
 
     #contentSecurityPolicyStyleSrcElem = ``;
-    contentSecurityPolicyStyleSrcElem(data: string): this{
+    contentSecurityPolicyStyleSrcElem(data: string): this {
         this.#contentSecurityPolicyStyleSrcElem = data;
         return this;
     }
 
     #contentSecurityPolicyScriptSrc = ``;
-    contentSecurityPolicyScriptSrc(data: string): this{
+    contentSecurityPolicyScriptSrc(data: string): this {
         this.#contentSecurityPolicyScriptSrc = data;
         return this;
     }
 
     #contentSecurityPolicyScriptSrcAttr = ``;
-    contentSecurityPolicyScriptSrcAttr(data: string): this{
+    contentSecurityPolicyScriptSrcAttr(data: string): this {
         this.#contentSecurityPolicyScriptSrcAttr = data;
         return this;
     }
 
     #contentSecurityPolicyScriptSrcElem = ``;
-    contentSecurityPolicyScriptSrcElem(data: string): this{
+    contentSecurityPolicyScriptSrcElem(data: string): this {
         this.#contentSecurityPolicyScriptSrcElem = data;
         return this;
     }
 
     #contentSecurityPolicyWorkerSrc = ``;
-    contentSecurityPolicyWorkerSrc(data: string): this{
+    contentSecurityPolicyWorkerSrc(data: string): this {
         this.#contentSecurityPolicyWorkerSrc = data;
         return this;
     }
 
     #contentSecurityPolicyTrustedTypes = ``;
-    contentSecurityPolicyTrustedTypes(data: string): this{
+    contentSecurityPolicyTrustedTypes(data: string): this {
         this.#contentSecurityPolicyTrustedTypes = data;
         return this;
     }
 
     #contentSecurityPolicyRequireTrustedTypesFor = ``;
-    contentSecurityPolicyRequireTrustedTypesFor(data: string): this{
+    contentSecurityPolicyRequireTrustedTypesFor(data: string): this {
         this.#contentSecurityPolicyRequireTrustedTypesFor = data;
         return this;
     }
 
     #contentSecurityPolicyUpgradeInsecureRequests = `upgrade-insecure-requests`;
-    contentSecurityPolicyUpgradeInsecureRequests(data: string): this{
+    contentSecurityPolicyUpgradeInsecureRequests(data: string): this {
         this.#contentSecurityPolicyUpgradeInsecureRequests = data;
         return this;
     }
 
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Embedder-Policy
     #crossOriginEmbedderPolicy: CrossOriginEmbedderPolicy = 'require-corp';
-    crossOriginEmbedderPolicy(data: CrossOriginEmbedderPolicy): this{
+    crossOriginEmbedderPolicy(data: CrossOriginEmbedderPolicy): this {
         this.#crossOriginEmbedderPolicy = data;
         return this;
     }
 
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Cross-Origin_Resource_Policy
     #crossOriginResourcePolicy: CrossOriginResourcePolicy = 'same-origin';
-    crossOriginResourcePolicy(data: CrossOriginResourcePolicy): this{
+    crossOriginResourcePolicy(data: CrossOriginResourcePolicy): this {
         this.#crossOriginResourcePolicy = data;
         return this;
     }
 
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Opener-Policy
     #crossOriginOpenerPolicy: CrossOriginOpenerPolicy = 'same-origin';
-    crossOriginOpenerPolicy(data: CrossOriginOpenerPolicy): this{
+    crossOriginOpenerPolicy(data: CrossOriginOpenerPolicy): this {
         this.#crossOriginOpenerPolicy = data;
         return this;
     }
 
     #originAgentCluster = '?1';
-    originAgentCluster(data: string): this{
+    originAgentCluster(data: string): this {
         this.#originAgentCluster = data;
         return this;
     }
 
     #referrerPolicy = 'no-referrer';
-    referrerPolicy(data: string): this{
+    referrerPolicy(data: string): this {
         this.#referrerPolicy = data;
         return this;
     }
 
     #strictTransportSecurity = 'max-age=63072000; includeSubDomains; preload';
-    strictTransportSecurity(data: string): this{
+    strictTransportSecurity(data: string): this {
         this.#strictTransportSecurity = data;
         return this;
     }
 
     #xContentTypeOptions = 'nosniff';
-    xContentTypeOptions(data: string): this{
+    xContentTypeOptions(data: string): this {
         this.#xContentTypeOptions = data;
         return this;
     }
 
     #xDnsPrefetchControl = 'off';
-    xDnsPrefetchControl(data: string): this{
+    xDnsPrefetchControl(data: string): this {
         this.#xDnsPrefetchControl = data;
         return this;
     }
 
     #xDownloadOptions = 'noopen';
-    xDownloadOptions(data: string): this{
+    xDownloadOptions(data: string): this {
         this.#xDownloadOptions = data;
         return this;
     }
 
     #xFrameOptions = 'deny';
-    xFrameOptions(data: string): this{
+    xFrameOptions(data: string): this {
         this.#xFrameOptions = data;
         return this;
     }
 
     #xPermittedCrossDomainPolicies = 'none';
-    xPermittedCrossDomainPolicies(data: string): this{
+    xPermittedCrossDomainPolicies(data: string): this {
         this.#xPermittedCrossDomainPolicies = data;
         return this;
     }
 
     #xXssProtection = '1; mode=block';
-    xXssProtection(data: string): this{
+    xXssProtection(data: string): this {
         this.#xXssProtection = data;
         return this;
     }

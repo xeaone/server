@@ -1,5 +1,5 @@
-import { assert } from 'https://deno.land/std@0.209.0/assert/assert.ts';
-import { Server, Handler, Router, Payload } from './src/mod.ts';
+import { assert } from 'jsr:@std/assert@0.219.1';
+import { Handler, Payload, Router, Server } from './src/mod.ts';
 
 const url = 'http://0.0.0.0:8000';
 
@@ -24,10 +24,9 @@ Deno.test('start server', async () => {
 });
 
 Deno.test('MethodNotAllowed', async () => {
-
     const handler = new Handler();
 
-    const server = Server(request => handler.handle(request));
+    const server = Server((request) => handler.handle(request));
 
     const response = await fetch(url, { method: '405' });
 
@@ -39,14 +38,13 @@ Deno.test('MethodNotAllowed', async () => {
 });
 
 Deno.test('get', async () => {
-
     const router = new Router();
     const handler = new Handler();
 
-    router.get('/', context => context.ok());
+    router.get('/', (context) => context.ok());
     handler.add(router);
 
-    const server = Server(request => handler.handle(request));
+    const server = Server((request) => handler.handle(request));
 
     const response = await fetch(url, { method: 'GET' });
 
@@ -65,12 +63,12 @@ Deno.test('post', async () => {
     const handler = new Handler();
 
     payload.any('/*', true);
-    router.post('/', context => context.ok(context.tool.payload.data));
+    router.post('/', (context) => context.ok(context.tool.payload.data));
 
     handler.add(payload);
     handler.add(router);
 
-    const server = Server(request => handler.handle(request));
+    const server = Server((request) => handler.handle(request));
     const response = await fetch(url, { method: 'POST', body });
     await server.shutdown();
 

@@ -1,16 +1,16 @@
 import { serve } from 'https://deno.land/std/http/mod.ts';
 
-function open(e: Event) {
+function open() {
     // const w = e.target as WebSocket;
     console.log('open');
 }
 
-function close(e: Event) {
+function close() {
     // const w = e.target as WebSocket;
     console.log('close');
 }
 
-function error(e: Event) {
+function error() {
     // const w = e.target as WebSocket;
     console.log('error');
 }

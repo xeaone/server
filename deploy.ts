@@ -1,10 +1,13 @@
-// import { format } from 'https://deno.land/std@0.213.0/semver/format.ts';
-// import { increment, parse, ReleaseType } from 'https://deno.land/std@0.213.0/semver/mod.ts';
+import { format } from 'jsr:@std/semver@0.219.1/format';
+import { increment, parse, ReleaseType } from 'jsr:@std/semver@0.219.1';
+
+import p from './package.json' with { type: 'json' };
+import d from './deno.json' with { type: 'json' };
 
 const cmd = (cmd: string, args?: string[]) => new Deno.Command(cmd, { args }).spawn().output();
 
-// const [release] = Deno.args;
-// if (!release) throw new Error('release required');
+const [release] = Deno.args;
+if (!release) throw new Error('release required');
 
 const f = await cmd('git', ['fetch']);
 if (!f.success) throw new Error('git auth');
@@ -12,16 +15,18 @@ if (!f.success) throw new Error('git auth');
 const n = await cmd('npm', ['whoami']);
 if (!n.success) throw new Error('npm auth');
 
-const pkg = JSON.parse(await Deno.readTextFile('./package.json'));
-// pkg.version = format(increment(parse(pkg.version), release as ReleaseType));
+const dp = await cmd('deno', ['publish', '--dry-run']);
+if (!dp.success) throw new Error('deno publish');
 
-console.log(pkg.version);
+const version = format(increment(parse(d.version), release as ReleaseType));
 
-await Deno.writeTextFile('./package.json', JSON.stringify(pkg, null, '    '));
+await Deno.writeTextFile('package.json', JSON.stringify(p, null, '    '));
+await Deno.writeTextFile('deno.json', JSON.stringify(d, null, '    '));
 
-await cmd('git', ['commit', '-a', '-m', pkg.version]);
+await cmd('git', ['commit', '-a', '-m', version]);
 await cmd('git', ['push']);
-await cmd('git', ['tag', pkg.version]);
+await cmd('git', ['tag', version]);
 await cmd('git', ['push', '--tag']);
 
 await cmd('npm', ['publish', '--access', 'public']);
+await cmd('deno', ['publish', '--allow-slow-types']);
