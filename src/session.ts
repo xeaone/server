@@ -1,6 +1,6 @@
 import { decodeBase64Url, encodeBase64Url, STATUS_CODE, STATUS_TEXT } from './deps.ts';
-import Context from './context.ts';
-import Plugin from './plugin.ts';
+import type Context from './context.ts';
+import { Plugin } from './plugin.ts';
 
 /*
     Base64 URL: https://www.ietf.org/rfc/rfc4648.txt

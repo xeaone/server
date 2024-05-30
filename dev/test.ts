@@ -1,5 +1,4 @@
-import { assert } from 'jsr:@std/assert@0.219.1';
-import { Handler, Payload, Router, Server } from './src/mod.ts';
+import { assert, Handler, Payload, Router, Server } from './deps.ts';
 
 const url = 'http://0.0.0.0:8000';
 

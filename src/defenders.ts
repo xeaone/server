@@ -1,5 +1,5 @@
-import Context from './context.ts';
-import Plugin from './plugin.ts';
+import type Context from './context.ts';
+import { Plugin } from './plugin.ts';
 
 /*
 https://infosec.mozilla.org/guidelines/web_security

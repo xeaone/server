@@ -1,6 +1,6 @@
 import { ByteSliceStream, calculate, extname, ifNoneMatch, join, media } from './deps.ts';
-import Context from './context.ts';
-import Plugin from './plugin.ts';
+import type Context from './context.ts';
+import { Plugin } from './plugin.ts';
 
 interface Options {
     spa?: boolean;

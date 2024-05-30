@@ -1,5 +1,5 @@
-import { Method } from './types.ts';
-import Context from './context.ts';
+import type { Method } from './types.ts';
+import type Context from './context.ts';
 
 type PluginMethod = Method | 'any';
 
@@ -16,7 +16,7 @@ interface PluginData {
     any: Map<string, any>;
 }
 
-export default abstract class Plugin<V = any> {
+export abstract class Plugin<V = any> {
     setup?(context: Context): Promise<Response | void> | Response | void;
 
     handle?(context: Context, value?: V): Promise<Response | void> | Response | void;

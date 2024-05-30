@@ -1,9 +1,9 @@
+import type Context from './context.ts';
+import { Plugin } from './plugin.ts';
+
 /**
  * Resource: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Forwarded
  */
-
-import Context from './context.ts';
-import Plugin from './plugin.ts';
 
 type ForwardedData = {
     by: Array<string>;

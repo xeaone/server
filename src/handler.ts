@@ -1,7 +1,7 @@
 import { STATUS_CODE, STATUS_TEXT } from './deps.ts';
+import type { Handle } from './handle.ts';
+import { Plugin } from './plugin.ts';
 import Context from './context.ts';
-import Handle from './handle.ts';
-import Plugin from './plugin.ts';
 
 const partsPattern = /\/[^./]+\.[^./]+$|^\/+|\/+$/g;
 

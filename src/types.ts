@@ -1,4 +1,4 @@
-import Context from './context.ts';
+import type Context from './context.ts';
 // import { Normalize, Payload, Router, Session } from './mod.ts';
 
 export type Handle = (context: Context) => Promise<Response | void> | Response | void;

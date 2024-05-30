@@ -6,8 +6,8 @@
         "."
     ],
     "tasks": {
-        "t": "deno test -A",
-        "d": "deno run -A deploy.ts",
+        "t": "deno test -A dev/test.ts",
+        "d": "deno run -A dev/deploy.ts",
         "e": "deno run -A --watch examples/server.ts"
     },
     "lint": {

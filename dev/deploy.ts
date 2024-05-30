@@ -1,8 +1,8 @@
-import { format } from 'jsr:@std/semver@0.219.1/format';
-import { increment, parse, ReleaseType } from 'jsr:@std/semver@0.219.1';
+import { format, increment, parse } from './deps.ts';
+import type { ReleaseType } from './deps.ts';
 
-import p from './package.json' with { type: 'json' };
-import d from './deno.json' with { type: 'json' };
+import p from '../package.json' with { type: 'json' };
+import d from '../deno.json' with { type: 'json' };
 
 const cmd = (cmd: string, args?: string[]) => new Deno.Command(cmd, { args }).spawn().output();
 

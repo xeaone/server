@@ -1,5 +1,5 @@
-import Context from './context.ts';
-import Plugin from './plugin.ts';
+import type Context from './context.ts';
+import { Plugin } from './plugin.ts';
 
 /**
  * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control

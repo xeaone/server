@@ -1,6 +1,6 @@
-import { media, STATUS_CODE, STATUS_TEXT, StatusCode } from './deps.ts';
-import { calculate, ifNoneMatch } from './deps.ts';
-import { Body, Head, Method } from './types.ts';
+import { calculate, ifNoneMatch, media, STATUS_CODE, STATUS_TEXT } from './deps.ts';
+import type { Body, Head, Method } from './types.ts';
+import type { StatusCode } from './deps.ts';
 
 export default class Context {
     tool: Record<string, any> = {};

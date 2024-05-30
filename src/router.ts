@@ -1,6 +1,6 @@
-import Context from './context.ts';
-import Handle from './handle.ts';
-import Plugin from './plugin.ts';
+import type Context from './context.ts';
+import type { Handle } from './handle.ts';
+import { Plugin } from './plugin.ts';
 
 export default class Router extends Plugin<Handle> {
     handle(context: Context, route?: Handle): Promise<Response | void> | Response | void {
