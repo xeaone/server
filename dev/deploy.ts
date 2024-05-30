@@ -26,7 +26,7 @@ d.version = `${version}`;
 await Deno.writeTextFile('package.json', JSON.stringify(p, null, '    '));
 await Deno.writeTextFile('deno.json', JSON.stringify(d, null, '    '));
 
-await cmd('deno', [ 'fmt' ]);
+await cmd('deno', ['fmt']);
 
 await cmd('git', ['commit', '-a', '-m', version]);
 await cmd('git', ['push']);
